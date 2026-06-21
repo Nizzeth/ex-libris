@@ -45,9 +45,11 @@ export async function updateProfile(patch) {
 
 // ---------------- Books ----------------
 export async function listBooks() {
+  const { data: u } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .from("books")
     .select(BOOK_COLS)
+    .eq("user_id", u.user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
   return data || [];
@@ -107,19 +109,26 @@ export async function reorderBooks(orderedIds) {
 }
 
 async function findBookByIsbn(isbn13, isbn10) {
-  let query = supabase.from("books").select(BOOK_COLS);
   const ors = [];
   if (isbn13) ors.push(`isbn13.eq.${isbn13}`);
   if (isbn10) ors.push(`isbn10.eq.${isbn10}`);
   if (!ors.length) return null;
-  const { data } = await query.or(ors.join(",")).limit(1);
+  const { data: u } = await supabase.auth.getUser();
+  const { data } = await supabase
+    .from("books")
+    .select(BOOK_COLS)
+    .eq("user_id", u.user.id)
+    .or(ors.join(","))
+    .limit(1);
   return (data && data[0]) || null;
 }
 
 async function maxSortOrder() {
+  const { data: u } = await supabase.auth.getUser();
   const { data } = await supabase
     .from("books")
     .select("sort_order")
+    .eq("user_id", u.user.id)
     .order("sort_order", { ascending: false })
     .limit(1);
   return data && data[0] ? data[0].sort_order : 0;
@@ -141,9 +150,11 @@ export async function uploadCover(bookId, blob, ext = "webp") {
 
 // ---------------- Shelves ----------------
 export async function listShelves() {
+  const { data: u } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .from("shelves")
     .select("*")
+    .eq("user_id", u.user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
   return data || [];
@@ -173,8 +184,12 @@ export async function deleteShelf(id) {
 
 // ---------------- Shelf membership ----------------
 export async function listShelfBooks() {
-  // All (shelf_id, book_id) rows the user can see.
-  const { data, error } = await supabase.from("shelf_books").select("shelf_id,book_id,position");
+  // Only rows on the current user's own shelves (inner-join filter on shelves.user_id).
+  const { data: u } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .from("shelf_books")
+    .select("shelf_id,book_id,position,shelves!inner(user_id)")
+    .eq("shelves.user_id", u.user.id);
   if (error) throw error;
   return data || [];
 }
