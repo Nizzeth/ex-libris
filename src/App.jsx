@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth, signOut } from "./context/AuthContext.jsx";
 import * as db from "./lib/db.js";
-import { booksToCSV, filterBooks, distinctTags } from "./lib/books.js";
+import { booksToCSV, filterBooks, distinctTags, STATUSES } from "./lib/books.js";
 import Login from "./components/Login.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import CoverWall from "./components/CoverWall.jsx";
@@ -27,6 +27,8 @@ export default function App() {
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
   const [tagDraft, setTagDraft] = useState("");
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
 
   function changeView(v) {
     setView(v);
@@ -96,6 +98,20 @@ export default function App() {
     a.download = "ex-libris.csv";
     a.click();
     toast("Exported " + books.length + " books");
+  }
+
+  async function saveName() {
+    const name = nameDraft.trim();
+    setEditingName(false);
+    if (!name || name === (profile?.display_name || "")) return;
+    try {
+      const p = await db.updateProfile({ display_name: name });
+      setProfile(p);
+      toast("Name updated");
+    } catch (e) {
+      console.error(e);
+      toast("Could not update name");
+    }
   }
 
   async function handleBackup() {
@@ -188,6 +204,31 @@ export default function App() {
     }
   }
 
+  async function setStatusForSelected(status) {
+    if (!status || !selected.size) return;
+    const ids = [...selected];
+    const updates = ids
+      .map((id) => {
+        const b = books.find((x) => x.id === id);
+        if (!b || b.status === status) return null;
+        return db.updateBook(id, { status });
+      })
+      .filter(Boolean);
+    if (!updates.length) {
+      toast("All selected already have that status");
+      return;
+    }
+    try {
+      await Promise.all(updates);
+      const label = STATUSES.find((s) => s.k === status)?.label || status;
+      toast(`Set ${updates.length} book${updates.length === 1 ? "" : "s"} to “${label}”`);
+      reloadAll();
+    } catch (e) {
+      console.error(e);
+      toast("Could not update status");
+    }
+  }
+
   const viewProps = {
     books: visibleBooks,
     onOpen: setDetailId,
@@ -202,7 +243,30 @@ export default function App() {
         <h1>Ex Libris</h1>
         <span className="sub">Your personal archive</span>
         <div className="spacer" />
-        <span className="who">{me.email}</span>
+        {editingName ? (
+          <input
+            className="who-edit"
+            autoFocus
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            onBlur={saveName}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveName();
+              if (e.key === "Escape") setEditingName(false);
+            }}
+          />
+        ) : (
+          <button
+            className="who"
+            title="Click to edit your name"
+            onClick={() => {
+              setNameDraft(profile?.display_name || me.email.split("@")[0]);
+              setEditingName(true);
+            }}
+          >
+            {profile?.display_name || me.email}
+          </button>
+        )}
         <button onClick={() => setShowAdd(true)}>+ Add books</button>
         <button onClick={handleExport}>Export CSV</button>
         <button onClick={handleBackup}>Backup</button>
@@ -293,6 +357,21 @@ export default function App() {
                 {shelves.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) setStatusForSelected(e.target.value);
+                  e.target.value = "";
+                }}
+                disabled={!selected.size}
+              >
+                <option value="">Set status…</option>
+                {STATUSES.map((s) => (
+                  <option key={s.k} value={s.k}>
+                    {s.label}
                   </option>
                 ))}
               </select>

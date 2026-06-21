@@ -65,12 +65,7 @@ export default function Sidebar({
   async function toggleShelfPublic(s) {
     try {
       const updated = await db.updateShelf(s.id, { is_public: !s.is_public });
-      if (updated.is_public) {
-        copy(shareUrl("shelf", updated.share_slug));
-        toast("Shelf is public — link copied");
-      } else {
-        toast("Shelf is private again");
-      }
+      toast(updated.is_public ? "Shelf is now public" : "Shelf is now private");
       onChange();
     } catch {
       toast("Could not update sharing");
@@ -80,20 +75,19 @@ export default function Sidebar({
   async function toggleLibraryPublic() {
     try {
       const updated = await db.updateProfile({ library_public: !profile?.library_public });
-      if (updated.library_public) {
-        copy(shareUrl("library", updated.library_slug));
-        toast("Library is public — link copied");
-      } else {
-        toast("Library is private again");
-      }
+      toast(updated.library_public ? "Library is now public" : "Library is now private");
       onChange();
     } catch {
       toast("Could not update sharing");
     }
   }
 
-  function copy(text) {
-    if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+  function copyLink(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => toast("Link copied")).catch(() => toast("Copy failed"));
+    } else {
+      toast(text);
+    }
   }
 
   const toggleTag = (t) =>
@@ -132,15 +126,27 @@ export default function Sidebar({
         >
           <span>🔖</span>
           <span>{s.name}</span>
+          {s.is_public && (
+            <span
+              className="share copy"
+              title="Copy share link"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyLink(shareUrl("shelf", s.share_slug));
+              }}
+            >
+              🔗
+            </span>
+          )}
           <span
-            className="share"
-            title={s.is_public ? "Public — click to make private / copy link" : "Make public & copy link"}
+            className="share toggle"
+            title={s.is_public ? "Public — click to make private" : "Private — click to make public"}
             onClick={(e) => {
               e.stopPropagation();
               toggleShelfPublic(s);
             }}
           >
-            {s.is_public ? "🔗" : "🔒"}
+            {s.is_public ? "🔓" : "🔒"}
           </span>
           <span className="count">{(shelfIndex.get(s.id) || new Set()).size}</span>
         </div>
@@ -221,13 +227,26 @@ export default function Sidebar({
 
       <h2>Share</h2>
       <div style={{ padding: "4px 6px" }}>
-        <button className="btn" style={{ width: "100%" }} onClick={toggleLibraryPublic}>
-          {profile?.library_public ? "🔗 Library public — copy link" : "🔒 Make whole library public"}
-        </button>
+        <label className="switch-row">
+          <span>Public library</span>
+          <span className="switch">
+            <input type="checkbox" checked={!!profile?.library_public} onChange={toggleLibraryPublic} />
+            <span className="slider" />
+          </span>
+        </label>
         {profile?.library_public && (
-          <div className="note" style={{ marginTop: 6, wordBreak: "break-all" }}>
-            {shareUrl("library", profile.library_slug)}
-          </div>
+          <>
+            <button
+              className="btn"
+              style={{ width: "100%", marginTop: 8 }}
+              onClick={() => copyLink(shareUrl("library", profile.library_slug))}
+            >
+              🔗 Click to copy link
+            </button>
+            <div className="note" style={{ marginTop: 6, wordBreak: "break-all" }}>
+              {shareUrl("library", profile.library_slug)}
+            </div>
+          </>
         )}
       </div>
     </aside>

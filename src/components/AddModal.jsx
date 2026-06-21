@@ -43,14 +43,15 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
 
   return (
     <div className="scrim">
-      <div className="modal">
+      <div className="modal add-wide">
         <div className="mh">
           <h3>Add books</h3>
           <button className="x" onClick={onClose}>
             ×
           </button>
         </div>
-        <div className="body">
+        <div className="body add-body">
+          <div className="add-main">
           <div className="tabs">
             {[
               ["scan", "📷 Scan"],
@@ -70,8 +71,9 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
           {tab === "search" && <SearchTab onAdd={addToTray} />}
           {tab === "csv" && <CsvTab shelves={shelves} onDone={onCommitted} />}
           {tab === "manual" && <ManualTab onAdd={addToTray} />}
+          </div>
 
-          <div className="tray-wrap">
+          <div className="add-tray">
             <div className="tray-head" style={{ fontSize: 14, marginBottom: 8 }}>
               🧺 <b>{tray.length}</b> book(s) ready to add
             </div>
