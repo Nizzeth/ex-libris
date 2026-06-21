@@ -365,7 +365,7 @@ export default function App() {
             <select value={filters.sort} onChange={(e) => setFilters((f) => ({ ...f, sort: e.target.value }))}>
               <option value="manual">Sort: Manual</option>
               <option value="title">Sort: Title</option>
-              <option value="author">Sort: Author</option>
+              <option value="author">Sort: Author Last Name</option>
               <option value="status">Sort: Status</option>
               <option value="added">Sort: Recently added</option>
               <option value="rating">Sort: Rating</option>

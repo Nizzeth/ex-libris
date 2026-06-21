@@ -309,7 +309,7 @@ export function filterBooks(books, { shelfBookIds, status, language, tags, searc
       (b) => (b.title || "").toLowerCase().includes(q) || (b.authors || "").toLowerCase().includes(q)
     );
   if (sort === "title") list.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-  else if (sort === "author") list.sort((a, b) => (a.authors || "").localeCompare(b.authors || ""));
+  else if (sort === "author") list.sort((a, b) => authorLastName(a.authors).localeCompare(authorLastName(b.authors)));
   else if (sort === "added") list.sort((a, b) => new Date(b.added_at || 0) - new Date(a.added_at || 0));
   else if (sort === "rating") list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
   else if (sort === "status") {
