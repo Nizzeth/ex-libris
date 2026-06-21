@@ -10,6 +10,8 @@ import AddModal from "./components/AddModal.jsx";
 import BookDetail from "./components/BookDetail.jsx";
 import StatsModal from "./components/StatsModal.jsx";
 import { Toaster, toast } from "./components/Toast.jsx";
+import { THEMES, applyTheme } from "./lib/themes.js";
+import Logo from "./components/Logo.jsx";
 
 export default function App() {
   const { session, loading } = useAuth();
@@ -58,11 +60,22 @@ export default function App() {
       db.listShelfBooks(),
     ]);
     setProfile(p);
+    if (p?.theme) applyTheme(p.theme);
     setBooks(b);
     setShelves(s);
     setShelfBooks(sb);
     setReady(true);
   }, []);
+
+  async function changeTheme(key) {
+    applyTheme(key);
+    setProfile((p) => (p ? { ...p, theme: key } : p));
+    try {
+      await db.updateProfile({ theme: key });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   useEffect(() => {
     if (session) {
@@ -296,6 +309,7 @@ export default function App() {
         <button className="hamburger" aria-label="Toggle sidebar" onClick={() => setSidebarOpen((o) => !o)}>
           ☰
         </button>
+        <Logo className="brand-mark" />
         <h1>Ex Libris</h1>
         <span className="sub">Your personal archive</span>
         <div className="spacer" />
@@ -329,6 +343,18 @@ export default function App() {
         <details className="hmenu">
           <summary aria-label="More actions">⋯</summary>
           <div className="hmenu-pop">
+            <div className="hmenu-group">Theme</div>
+            {THEMES.map((t) => (
+              <button
+                key={t.key}
+                className={"hmenu-theme" + (profile?.theme === t.key ? " on" : "")}
+                onClick={() => changeTheme(t.key)}
+              >
+                <span>{t.label}</span>
+                {profile?.theme === t.key && <span aria-hidden="true">✓</span>}
+              </button>
+            ))}
+            <div className="hmenu-sep" />
             <button onClick={(e) => { handleExport(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Export CSV</button>
             <button onClick={(e) => { handleBackup(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Backup</button>
             <button onClick={(e) => { document.getElementById("restoreFile").click(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Restore</button>

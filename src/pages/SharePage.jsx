@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as db from "../lib/db.js";
 import { filterBooks, distinctLanguages, STATUSES } from "../lib/books.js";
+import { isTheme } from "../lib/themes.js";
 import BookCard from "../components/BookCard.jsx";
+import Logo from "../components/Logo.jsx";
 import "../styles.css";
 
 export default function SharePage({ kind }) {
@@ -26,6 +28,13 @@ export default function SharePage({ kind }) {
       cancelled = true;
     };
   }, [kind, slug]);
+
+  // Apply the owner's chosen theme to the public page (without touching the viewer's saved preference)
+  useEffect(() => {
+    if (!state.data) return;
+    const t = kind === "library" ? state.data.profile?.theme : state.data.theme;
+    document.documentElement.dataset.theme = isTheme(t) ? t : "archive";
+  }, [state.data, kind]);
 
   const books = state.data?.books || [];
   const langs = useMemo(() => distinctLanguages(books), [books]);
@@ -60,6 +69,7 @@ export default function SharePage({ kind }) {
   return (
     <div>
       <div className="sharehead">
+        <Logo className="share-logo" size={36} />
         <h1>{title}</h1>
         <div className="by">{by} · {books.length} books</div>
         <div className="sharefilters">
@@ -102,9 +112,10 @@ export default function SharePage({ kind }) {
           </div>
         )}
       </main>
-      <div className="note" style={{ textAlign: "center", padding: "24px" }}>
-        Made with Ex Libris
-      </div>
+      <footer className="sharefoot">
+        <Logo className="share-logo foot" size={20} />
+        <span>Made with Ex Libris</span>
+      </footer>
     </div>
   );
 }

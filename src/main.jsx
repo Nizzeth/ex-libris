@@ -4,7 +4,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import App from "./App.jsx";
 import SharePage from "./pages/SharePage.jsx";
+import { applyTheme, storedTheme } from "./lib/themes.js";
 import "./styles.css";
+
+applyTheme(storedTheme());
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

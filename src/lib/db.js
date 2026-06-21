@@ -289,7 +289,7 @@ export async function importBackup(data) {
 export async function getPublicLibrary(slug) {
   const { data: profile, error: pErr } = await supabase
     .from("profiles")
-    .select("id,display_name,library_public,library_slug")
+    .select("id,display_name,library_public,library_slug,theme")
     .eq("library_slug", slug)
     .eq("library_public", true)
     .maybeSingle();
@@ -315,7 +315,7 @@ export async function getPublicShelf(slug) {
   if (!shelf) return null;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name")
+    .select("display_name,theme")
     .eq("id", shelf.user_id)
     .maybeSingle();
   const { data: links, error: lErr } = await supabase
@@ -330,5 +330,5 @@ export async function getPublicShelf(slug) {
     if (error) throw error;
     books = data || [];
   }
-  return { shelf, owner: profile?.display_name || "A reader", books };
+  return { shelf, owner: profile?.display_name || "A reader", theme: profile?.theme || "archive", books };
 }

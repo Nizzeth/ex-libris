@@ -430,3 +430,67 @@ header.app .hmenu-pop button:hover{background:var(--chip)}
   header.app h1{font-size:18px}
   .stat-cards{grid-template-columns:1fr}
 }
+
+/* ======================================================
+   Branding + theme menu
+   ====================================================== */
+header.app .brand-mark{color:#f3e4bd;flex:none}
+.brand-mark-lg{color:var(--accent);display:block;margin:0 auto 4px}
+.hmenu-group{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:8px 10px 2px}
+.hmenu-sep{height:1px;background:var(--line);margin:6px 4px}
+header.app .hmenu-theme{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
+
+/* ======================================================
+   THEME — Wizard in the Tower (dark, candlelit)
+   ====================================================== */
+[data-theme="tower"]{
+  --bg:#17120d; --panel:#241c14; --ink:#ecdfc4; --muted:#a49372; --line:#3b2f22;
+  --accent:#c79a3e; --accent2:#dcab48; --chip:#2e251b; --gold:#d8b257;
+  --shadow:0 10px 26px rgba(0,0,0,.55); --read:#7c9148; --reading:#c98f3f; --danger:#d2756b;
+}
+[data-theme="tower"] body{background:var(--parchment), radial-gradient(135% 120% at 50% -10%, #251c12 0%, #17120d 55%, #0c0906 100%);background-size:240px 240px,cover;background-blend-mode:soft-light,normal}
+[data-theme="tower"] header.app{background:var(--parchment), linear-gradient(180deg,#3a2614,#1d130b);background-size:200px 200px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
+[data-theme="tower"] aside{background:var(--parchment), linear-gradient(180deg,#241c14,#1b140d);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6)}
+[data-theme="tower"] aside h2{color:var(--gold)}
+[data-theme="tower"] .card{background:var(--parchment), var(--panel);border-color:#3b2f22;box-shadow:0 2px 2px rgba(0,0,0,.45),0 14px 22px -10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.04)}
+[data-theme="tower"] .modal{background:var(--parchment), var(--panel);border:1px solid var(--gold)}
+[data-theme="tower"] .modal .mh{background:transparent;border-bottom:1px solid var(--line)}
+[data-theme="tower"] .btn{background:#2c2218;border-color:#3f3122;color:var(--ink)}
+[data-theme="tower"] .btn.primary{background:linear-gradient(180deg,#caa14a,#9c7426);border-color:#7c5c1c;color:#241a0a}
+[data-theme="tower"] .tag{background:var(--chip);border-color:var(--line);color:var(--ink)}
+[data-theme="tower"] .tag.sel{background:var(--accent);border-color:var(--accent);color:#241a0a}
+[data-theme="tower"] input:not([type=checkbox]),[data-theme="tower"] select,[data-theme="tower"] textarea{background:#2a2118 !important;color:var(--ink) !important;border-color:var(--line) !important}
+[data-theme="tower"] .toast{background:#2a2118;color:#f3e4bd;border:1px solid var(--line)}
+[data-theme="tower"] .sharehead{background:var(--parchment), linear-gradient(180deg,#241c14,#1b140d);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
+[data-theme="tower"] .authcard{background:var(--parchment), var(--panel);border:1px solid var(--gold)}
+[data-theme="tower"] .hmenu-pop{background:var(--panel);border-color:var(--line)}
+[data-theme="tower"] header.app .hmenu-pop button{color:var(--ink)}
+[data-theme="tower"] header.app .hmenu-pop button:hover{background:#2f261c}
+[data-theme="tower"] .stat-card{background:#2a2118}
+[data-theme="tower"] .sb-track{background:#3a2e20}
+[data-theme="tower"] .add-tray{background:linear-gradient(270deg,#241c14,#1b140d)}
+[data-theme="tower"] .banner{background:#2e2415;border-color:var(--gold);color:#e7d4a0}
+/* keep inputs light where they sit on the light open-book pages */
+[data-theme="tower"] .body.book input:not([type=checkbox]),[data-theme="tower"] .body.book select,[data-theme="tower"] .body.book textarea{background:#fff !important;color:#33291c !important;border-color:#d8c8a6 !important}
+
+/* ======================================================
+   THEME — Desk at the Library (warm wood + banker's lamp)
+   ====================================================== */
+[data-theme="desk"]{
+  --bg:#3f2e1c; --panel:#f7f0dd; --ink:#33291c; --muted:#7a6f59; --line:#d8c8a6;
+  --accent:#2f5d3a; --accent2:#b08d4f; --chip:#e7dcc2; --gold:#b08d4f;
+  --shadow:0 8px 20px rgba(30,18,8,.3); --read:#3b6d2e; --reading:#b9824f; --danger:#9a2f28;
+}
+[data-theme="desk"] body{background:var(--parchment), radial-gradient(130% 120% at 50% -10%, #5a4127 0%, #3f2e1c 55%, #281b10 100%);background-size:240px 240px,cover;background-blend-mode:soft-light,normal}
+[data-theme="desk"] header.app{background:var(--parchment), linear-gradient(180deg,#2f5d3a,#1f3f27);background-size:200px 200px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
+[data-theme="desk"] .btn.primary{background:linear-gradient(180deg,#356b42,#244c2e);border-color:#1c3b24;color:#eef3e9}
+[data-theme="desk"] .tag.sel{background:var(--accent);border-color:var(--accent);color:#eef3e9}
+[data-theme="desk"] aside h2{color:#2f5d3a}
+[data-theme="desk"] .sharehead{background:var(--parchment), linear-gradient(180deg,#3a6a46,#244c2e);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
+[data-theme="desk"] .sharehead h1,[data-theme="desk"] .sharehead .by{color:#f0ead6}
+
+/* share page branding */
+.share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
+.share-logo.foot{margin:0}
+.sharefoot{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);padding:28px 20px;font-size:13px}

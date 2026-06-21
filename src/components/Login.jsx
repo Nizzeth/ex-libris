@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { signInWithEmail } from "../context/AuthContext.jsx";
 import { isConfigured } from "../lib/supabase.js";
+import Logo from "./Logo.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ export default function Login() {
   return (
     <div className="center">
       <div className="authcard">
+        <Logo className="brand-mark-lg" size={44} />
         <h1>Ex Libris</h1>
         <p>Your personal archive</p>
 
