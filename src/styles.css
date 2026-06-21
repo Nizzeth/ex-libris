@@ -155,6 +155,7 @@ main{padding:18px 22px}
 .trow .rm{cursor:pointer;color:var(--muted)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
 @keyframes sp{to{transform:rotate(360deg)}}
+.btn.primary .spin{border-color:rgba(255,255,255,.45);border-top-color:#fff;margin-right:5px}
 
 /* view toggle */
 .viewtoggle{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}

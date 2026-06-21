@@ -20,6 +20,7 @@ function loadScript(src) {
 export default function AddModal({ shelves, onClose, onCommitted }) {
   const [tab, setTab] = useState("isbn");
   const [tray, setTray] = useState([]);
+  const [committing, setCommitting] = useState(false);
 
   const key = (b) => b.isbn13 || b.isbn10 || `${b.title}|${b.authors}`.toLowerCase();
   function addToTray(b) {
@@ -27,7 +28,8 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
   }
 
   async function commit() {
-    if (!tray.length) return;
+    if (!tray.length || committing) return; // guard against double-clicks
+    setCommitting(true);
     let n = 0;
     for (const b of tray) {
       try {
@@ -38,6 +40,7 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
       }
     }
     toast("Added " + n + " book" + (n === 1 ? "" : "s"));
+    setCommitting(false);
     onCommitted();
   }
 
@@ -74,8 +77,14 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
           </div>
 
           <div className="add-tray">
-            <button className="btn primary tray-commit" disabled={!tray.length} onClick={commit}>
-              Add {tray.length || ""} to library
+            <button className="btn primary tray-commit" disabled={!tray.length || committing} onClick={commit}>
+              {committing ? (
+                <>
+                  <span className="spin" /> Adding…
+                </>
+              ) : (
+                <>Add {tray.length || ""} to library</>
+              )}
             </button>
             <div className="tray-head" style={{ fontSize: 14, margin: "10px 0 8px" }}>
               🧺 <b>{tray.length}</b> book(s) ready to add

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth, signOut } from "./context/AuthContext.jsx";
 import * as db from "./lib/db.js";
-import { booksToCSV, filterBooks, distinctTags, STATUSES } from "./lib/books.js";
+import { booksToCSV, filterBooks, distinctTags, STATUSES, LANGS } from "./lib/books.js";
 import Login from "./components/Login.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import CoverWall from "./components/CoverWall.jsx";
@@ -229,6 +229,45 @@ export default function App() {
     }
   }
 
+  async function setLanguageForSelected(language) {
+    if (!selected.size) return;
+    const ids = [...selected];
+    const updates = ids
+      .map((id) => {
+        const b = books.find((x) => x.id === id);
+        if (!b || (b.language || "") === language) return null;
+        return db.updateBook(id, { language });
+      })
+      .filter(Boolean);
+    if (!updates.length) {
+      toast("All selected already have that language");
+      return;
+    }
+    try {
+      await Promise.all(updates);
+      toast(`Set language to “${language || "—"}” on ${updates.length} book${updates.length === 1 ? "" : "s"}`);
+      reloadAll();
+    } catch (e) {
+      console.error(e);
+      toast("Could not update language");
+    }
+  }
+
+  async function removeSelected() {
+    if (!selected.size) return;
+    const ids = [...selected];
+    if (!confirm(`Remove ${ids.length} book${ids.length === 1 ? "" : "s"} from your library? This can't be undone.`)) return;
+    try {
+      await Promise.all(ids.map((id) => db.deleteBook(id)));
+      toast(`Removed ${ids.length} book${ids.length === 1 ? "" : "s"}`);
+      setSelected(new Set());
+      reloadAll();
+    } catch (e) {
+      console.error(e);
+      toast("Could not remove books");
+    }
+  }
+
   const viewProps = {
     books: visibleBooks,
     onOpen: setDetailId,
@@ -375,6 +414,23 @@ export default function App() {
                   </option>
                 ))}
               </select>
+              <select
+                value=""
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v) setLanguageForSelected(v === "__clear" ? "" : v);
+                  e.target.value = "";
+                }}
+                disabled={!selected.size}
+              >
+                <option value="">Set language…</option>
+                {LANGS.map((l) => (
+                  <option key={l.code} value={l.name}>
+                    {l.name}
+                  </option>
+                ))}
+                <option value="__clear">— Clear —</option>
+              </select>
               <span className="seltag-group">
                 <input
                   list="all-tags"
@@ -401,6 +457,9 @@ export default function App() {
               </button>
               <button className="btn" onClick={() => setSelected(new Set())} disabled={!selected.size}>
                 Clear
+              </button>
+              <button className="btn danger" onClick={removeSelected} disabled={!selected.size}>
+                Remove
               </button>
               <span className="note">…or drag selected books onto a shelf in the sidebar.</span>
             </div>
