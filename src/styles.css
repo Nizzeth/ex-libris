@@ -405,8 +405,8 @@ aside h2{color:#7a5a2e;letter-spacing:.14em}
 .hmenu>summary{list-style:none;cursor:pointer;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fdf6ec;padding:8px 12px;border-radius:8px;font-size:15px;line-height:1}
 .hmenu>summary::-webkit-details-marker{display:none}
 .hmenu-pop{position:absolute;right:0;top:calc(100% + 6px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:152px;padding:6px;z-index:50}
-.hmenu-pop button{background:none;border:none;text-align:left;padding:8px 10px;border-radius:7px;color:var(--ink);font-size:14px}
-.hmenu-pop button:hover{background:var(--chip)}
+header.app .hmenu-pop button{background:none;border:1px solid transparent;text-align:left;padding:8px 10px;border-radius:7px;color:var(--ink);font-size:14px;width:100%}
+header.app .hmenu-pop button:hover{background:var(--chip)}
 
 :focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
 .card:focus-visible,.spine:focus-visible{outline:3px solid var(--accent2);outline-offset:3px}
