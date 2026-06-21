@@ -84,6 +84,8 @@ create table if not exists public.books (
   loan_status text not null default 'none'
                 check (loan_status in ('none','borrowed','lent')),
   loan_party  text default '',
+  date_started  date,
+  date_finished date,
   sort_order  int not null default 0,
   added_at    timestamptz not null default now()
 );

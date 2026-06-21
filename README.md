@@ -51,6 +51,7 @@ If you already ran `schema.sql` before these features existed, run the migration
 `supabase/` once, in order, in the SQL Editor:
 - `migration-002.sql` — adds the **Recommended** status and the **Reading Notes** field.
 - `migration-003.sql` — adds **borrowed / lent** loan tracking.
+- `migration-004.sql` — adds **reading dates** (started / finished).
 
 Fresh installs get everything from `schema.sql` and can skip this.
 

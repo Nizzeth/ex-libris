@@ -8,6 +8,8 @@ function shareUrl(kind, slug) {
 }
 
 export default function Sidebar({
+  open,
+  onNavigate,
   profile,
   shelves,
   books,
@@ -19,6 +21,10 @@ export default function Sidebar({
   onChange,
   onDropBooks,
 }) {
+  const selectShelf = (id) => {
+    setActiveShelf(id);
+    onNavigate?.();
+  };
   const [newShelf, setNewShelf] = useState("");
   const [dropShelf, setDropShelf] = useState(null);
   const langs = distinctLanguages(books);
@@ -97,11 +103,11 @@ export default function Sidebar({
     }));
 
   return (
-    <aside>
+    <aside className={open ? "open" : ""}>
       <h2>Shelves</h2>
       <div
         className={"shelf" + (activeShelf === "all" ? " active" : "")}
-        onClick={() => setActiveShelf("all")}
+        onClick={() => selectShelf("all")}
       >
         <span>📚</span>
         <span>All books</span>
@@ -111,7 +117,7 @@ export default function Sidebar({
         <div
           key={s.id}
           className={"shelf" + (activeShelf === s.id ? " active" : "") + (dropShelf === s.id ? " droptarget" : "")}
-          onClick={() => setActiveShelf(s.id)}
+          onClick={() => selectShelf(s.id)}
           onContextMenu={(e) => {
             e.preventDefault();
             removeShelf(s);
@@ -129,10 +135,20 @@ export default function Sidebar({
           {s.is_public && (
             <span
               className="share copy"
+              role="button"
+              tabIndex={0}
+              aria-label={`Copy share link for ${s.name}`}
               title="Copy share link"
               onClick={(e) => {
                 e.stopPropagation();
                 copyLink(shareUrl("shelf", s.share_slug));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  copyLink(shareUrl("shelf", s.share_slug));
+                }
               }}
             >
               🔗
@@ -140,10 +156,20 @@ export default function Sidebar({
           )}
           <span
             className="share toggle"
+            role="button"
+            tabIndex={0}
+            aria-label={s.is_public ? `${s.name} is public, make private` : `${s.name} is private, make public`}
             title={s.is_public ? "Public — click to make private" : "Private — click to make public"}
             onClick={(e) => {
               e.stopPropagation();
               toggleShelfPublic(s);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleShelfPublic(s);
+              }
             }}
           >
             {s.is_public ? "🔓" : "🔒"}

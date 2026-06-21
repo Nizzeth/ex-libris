@@ -27,6 +27,12 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
     setTray((prev) => (prev.some((x) => key(x) === key(b)) ? prev : [...prev, b]));
   }
 
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   async function commit() {
     if (!tray.length || committing) return; // guard against double-clicks
     setCommitting(true);
@@ -46,10 +52,10 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
 
   return (
     <div className="scrim">
-      <div className="modal add-wide">
+      <div className="modal add-wide" role="dialog" aria-modal="true" aria-label="Add books">
         <div className="mh">
           <h3>Add books</h3>
-          <button className="x" onClick={onClose}>
+          <button className="x" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -331,7 +337,7 @@ function ResultRow({ b, onAdd }) {
   const cu = coverUrl(b);
   return (
     <div className="rrow">
-      {cu && !broken ? <img src={cu} alt="" onError={() => setBroken(true)} /> : <div className="noc" />}
+      {cu && !broken ? <img src={cu} alt="" loading="lazy" onError={() => setBroken(true)} /> : <div className="noc" />}
       <div className="ri">
         <div className="t">{b.title}</div>
         <div className="a">

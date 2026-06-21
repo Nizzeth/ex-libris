@@ -10,11 +10,30 @@ export default function BookCard({ book, readOnly, onOpen, draggable, dragProps,
     if (selectMode) onToggleSelect?.(book.id);
     else onOpen?.(book.id);
   };
+  const interactive = onOpen || onToggleSelect;
   return (
-    <div className={cls} draggable={draggable} onClick={handleClick} {...rest}>
+    <div
+      className={cls}
+      draggable={draggable}
+      onClick={handleClick}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? `${book.title || "Untitled"} — ${book.authors || "Unknown"}` : undefined}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleClick();
+              }
+            }
+          : undefined
+      }
+      {...rest}
+    >
       <div className="cover">
         {cu && !broken ? (
-          <img src={cu} alt="" onError={() => setBroken(true)} />
+          <img src={cu} alt={book.title ? `Cover of ${book.title}` : ""} loading="lazy" onError={() => setBroken(true)} />
         ) : (
           <div className="ph">{book.title || "No cover"}</div>
         )}

@@ -331,3 +331,41 @@ export function distinctTags(books) {
   books.forEach((b) => (b.tags || []).forEach((t) => s.add(t)));
   return [...s].sort();
 }
+
+// Aggregate stats for the dashboard. Pure: no I/O.
+export function computeStats(books) {
+  const yearNow = new Date().getFullYear();
+  const byStatus = {};
+  STATUSES.forEach((s) => (byStatus[s.k] = 0));
+  const byLang = {};
+  const byAuthor = {};
+  const loan = { borrowed: 0, lent: 0 };
+  let readThisYear = 0;
+  let ratingSum = 0;
+  let ratedCount = 0;
+  books.forEach((b) => {
+    byStatus[b.status] = (byStatus[b.status] || 0) + 1;
+    if (b.language) byLang[b.language] = (byLang[b.language] || 0) + 1;
+    const author = (b.authors || "").split(",")[0].trim();
+    if (author) byAuthor[author] = (byAuthor[author] || 0) + 1;
+    if (b.loan_status === "borrowed") loan.borrowed++;
+    if (b.loan_status === "lent") loan.lent++;
+    if (b.date_finished && new Date(b.date_finished).getFullYear() === yearNow) readThisYear++;
+    if (b.rating > 0) {
+      ratingSum += b.rating;
+      ratedCount++;
+    }
+  });
+  const topAuthors = Object.entries(byAuthor).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 6);
+  const topLangs = Object.entries(byLang).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  return {
+    total: books.length,
+    byStatus,
+    topLangs,
+    topAuthors,
+    loan,
+    readThisYear,
+    avgRating: ratedCount ? ratingSum / ratedCount : 0,
+    ratedCount,
+  };
+}

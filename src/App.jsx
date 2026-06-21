@@ -8,6 +8,7 @@ import CoverWall from "./components/CoverWall.jsx";
 import SpineView from "./components/SpineView.jsx";
 import AddModal from "./components/AddModal.jsx";
 import BookDetail from "./components/BookDetail.jsx";
+import StatsModal from "./components/StatsModal.jsx";
 import { Toaster, toast } from "./components/Toast.jsx";
 
 export default function App() {
@@ -17,11 +18,14 @@ export default function App() {
   const [shelves, setShelves] = useState([]);
   const [shelfBooks, setShelfBooks] = useState([]); // [{shelf_id, book_id}]
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const [activeShelf, setActiveShelf] = useState("all");
   const [filters, setFilters] = useState({ status: null, language: null, loan: null, tags: [], search: "", sort: "manual", dir: "asc" });
   const [showAdd, setShowAdd] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const [detailId, setDetailId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [view, setView] = useState(() => localStorage.getItem("exlibris_view") || "wall");
   const [selectMode, setSelectMode] = useState(false);
@@ -63,12 +67,22 @@ export default function App() {
   useEffect(() => {
     if (session) {
       setReady(false);
+      setLoadError(false);
       reloadAll().catch((e) => {
         console.error(e);
-        toast("Could not load your library");
+        setLoadError(true);
       });
     }
   }, [session, reloadAll]);
+
+  function retryLoad() {
+    setReady(false);
+    setLoadError(false);
+    reloadAll().catch((e) => {
+      console.error(e);
+      setLoadError(true);
+    });
+  }
 
   const shelfIndex = useMemo(() => {
     const m = new Map();
@@ -279,6 +293,9 @@ export default function App() {
   return (
     <>
       <header className="app">
+        <button className="hamburger" aria-label="Toggle sidebar" onClick={() => setSidebarOpen((o) => !o)}>
+          ☰
+        </button>
         <h1>Ex Libris</h1>
         <span className="sub">Your personal archive</span>
         <div className="spacer" />
@@ -286,6 +303,7 @@ export default function App() {
           <input
             className="who-edit"
             autoFocus
+            aria-label="Your display name"
             value={nameDraft}
             onChange={(e) => setNameDraft(e.target.value)}
             onBlur={saveName}
@@ -306,10 +324,17 @@ export default function App() {
             {profile?.display_name || me.email}
           </button>
         )}
+        <button onClick={() => setShowStats(true)}>Stats</button>
         <button onClick={() => setShowAdd(true)}>+ Add books</button>
-        <button onClick={handleExport}>Export CSV</button>
-        <button onClick={handleBackup}>Backup</button>
-        <button onClick={() => document.getElementById("restoreFile").click()}>Restore</button>
+        <details className="hmenu">
+          <summary aria-label="More actions">⋯</summary>
+          <div className="hmenu-pop">
+            <button onClick={(e) => { handleExport(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Export CSV</button>
+            <button onClick={(e) => { handleBackup(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Backup</button>
+            <button onClick={(e) => { document.getElementById("restoreFile").click(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Restore</button>
+            <button onClick={() => signOut()}>Sign out</button>
+          </div>
+        </details>
         <input
           id="restoreFile"
           type="file"
@@ -320,11 +345,13 @@ export default function App() {
             e.target.value = "";
           }}
         />
-        <button onClick={() => signOut()}>Sign out</button>
       </header>
 
-      <div className="layout">
+      <div className={"layout" + (sidebarOpen ? " sidebar-open" : "")}>
+        {sidebarOpen && <div className="drawer-backdrop" onClick={() => setSidebarOpen(false)} />}
         <Sidebar
+          open={sidebarOpen}
+          onNavigate={() => setSidebarOpen(false)}
           profile={profile}
           shelves={shelves}
           books={books}
@@ -466,7 +493,15 @@ export default function App() {
           )}
 
           {!ready ? (
-            <div className="empty"><span className="spin" /></div>
+            loadError ? (
+              <div className="empty">
+                <h3>Couldn't load your library</h3>
+                <p>Check your connection, then try again.</p>
+                <button className="btn primary" onClick={retryLoad}>Retry</button>
+              </div>
+            ) : (
+              <div className="empty"><span className="spin" /></div>
+            )
           ) : view === "shelf" ? (
             <SpineView {...viewProps} canReorder={filters.sort === "manual" && !selectMode} onReorder={reorder} />
           ) : (
@@ -485,6 +520,8 @@ export default function App() {
           }}
         />
       )}
+
+      {showStats && <StatsModal books={books} onClose={() => setShowStats(false)} />}
 
       {detailId && books.some((b) => b.id === detailId) && (
         <BookDetail

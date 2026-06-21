@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { authorLastName, statusColor, STATUSES, LOANS, isOnLoan } from "../lib/books.js";
 import { dragIdsFor } from "./CoverWall.jsx";
 
@@ -30,6 +30,26 @@ function spineStyle(book) {
 export default function SpineView({ books, onOpen, selectMode, selected, onToggleSelect, canReorder, onReorder }) {
   const dragId = useRef(null);
   const [over, setOver] = useState(null);
+  const spinesRef = useRef(null);
+  const [planks, setPlanks] = useState([]);
+
+  useEffect(() => {
+    const el = spinesRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rows = new Map();
+      el.querySelectorAll(".spine").forEach((s) => {
+        const top = s.offsetTop;
+        rows.set(top, Math.max(rows.get(top) || 0, top + s.offsetHeight));
+      });
+      const next = [...rows.values()].sort((a, b) => a - b);
+      setPlanks((prev) => (prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [books]);
 
   if (!books.length) {
     return (
@@ -63,7 +83,10 @@ export default function SpineView({ books, onOpen, selectMode, selected, onToggl
           </span>
         ))}
       </div>
-      <div className="spines">
+      <div className="spines" ref={spinesRef}>
+        {planks.map((y, i) => (
+          <div key={"plank" + i} className="shelf-plank" style={{ top: y }} aria-hidden="true" />
+        ))}
         {books.map((b) => {
           const isSel = selected?.has(b.id);
           return (
@@ -72,8 +95,17 @@ export default function SpineView({ books, onOpen, selectMode, selected, onToggl
               className={"spine" + (isSel ? " sel" : "") + (over === b.id ? " dragover" : "")}
               style={spineStyle(b)}
               title={`${b.title} — ${b.authors || "Unknown"}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`${b.title || "Untitled"} — ${b.authors || "Unknown"}`}
               draggable
               onClick={() => (selectMode ? onToggleSelect?.(b.id) : onOpen?.(b.id))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  selectMode ? onToggleSelect?.(b.id) : onOpen?.(b.id);
+                }
+              }}
               onDragStart={(e) => {
                 dragId.current = b.id;
                 e.dataTransfer.effectAllowed = "copyMove";

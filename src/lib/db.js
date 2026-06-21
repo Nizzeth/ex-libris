@@ -5,7 +5,7 @@
 import { supabase } from "./supabase.js";
 
 const BOOK_COLS =
-  "id,user_id,title,authors,isbn13,isbn10,published,publisher,language,cover_url,status,rating,tags,notes,reading_notes,loan_status,loan_party,sort_order,added_at";
+  "id,user_id,title,authors,isbn13,isbn10,published,publisher,language,cover_url,status,rating,tags,notes,reading_notes,loan_status,loan_party,date_started,date_finished,sort_order,added_at";
 
 // ---------------- Profile ----------------
 export async function getMyProfile() {
@@ -77,7 +77,12 @@ export async function addBook(book) {
     rating: book.rating || 0,
     tags: book.tags || [],
     notes: book.notes || "",
-    sort_order: max + 1,
+    reading_notes: book.reading_notes || "",
+    loan_status: book.loan_status || "none",
+    loan_party: book.loan_party || "",
+    date_started: book.date_started || null,
+    date_finished: book.date_finished || null,
+    sort_order: typeof book.sort_order === "number" ? book.sort_order : max + 1,
   };
   const { data, error } = await supabase.from("books").insert(row).select(BOOK_COLS).single();
   if (error) throw error;
@@ -218,7 +223,8 @@ export async function setBookShelves(bookId, shelfIds) {
 // ---------------- Full backup / restore (JSON) ----------------
 const BACKUP_BOOK_FIELDS = [
   "title", "authors", "isbn13", "isbn10", "published", "publisher", "language", "cover_url",
-  "status", "rating", "tags", "notes", "reading_notes", "loan_status", "loan_party", "sort_order",
+  "status", "rating", "tags", "notes", "reading_notes", "loan_status", "loan_party",
+  "date_started", "date_finished", "sort_order",
 ];
 
 export async function exportBackup() {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as db from "../lib/db.js";
 import { LANGS, STATUSES, coverUrl, getAlternateCovers } from "../lib/books.js";
 import { shrinkImage } from "../lib/image.js";
@@ -14,6 +14,8 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
   const [readingNotes, setReadingNotes] = useState(book.reading_notes || "");
   const [loanStatus, setLoanStatus] = useState(book.loan_status || "none");
   const [loanParty, setLoanParty] = useState(book.loan_party || "");
+  const [dateStarted, setDateStarted] = useState(book.date_started || "");
+  const [dateFinished, setDateFinished] = useState(book.date_finished || "");
   const [tags, setTags] = useState([...(book.tags || [])]);
   const [tagInput, setTagInput] = useState("");
   const [shelfSel, setShelfSel] = useState(
@@ -27,6 +29,12 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
   const [alts, setAlts] = useState(null); // null=not loaded, "loading", or array
   const [coverBusy, setCoverBusy] = useState(false);
   const previewUrl = cover || coverUrl(book);
+
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   async function onUpload(e) {
     const file = e.target.files[0];
@@ -86,6 +94,8 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
         reading_notes: readingNotes,
         loan_status: loanStatus,
         loan_party: loanStatus === "none" ? "" : loanParty.trim(),
+        date_started: dateStarted || null,
+        date_finished: dateFinished || null,
         tags,
         cover_url: cover,
       });
@@ -112,10 +122,10 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
 
   return (
     <div className="scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal book-wide">
+      <div className="modal book-wide" role="dialog" aria-modal="true" aria-label={`Details for ${book.title || "book"}`}>
         <div className="mh">
           <h3>Book details</h3>
-          <button className="x" onClick={onClose}>
+          <button className="x" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -125,7 +135,7 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
             <div>
               <div className="dcover">
                 {previewUrl ? (
-                  <img src={previewUrl} alt="" onError={(e) => (e.target.style.display = "none")} />
+                  <img src={previewUrl} alt={book.title ? `Cover of ${book.title}` : ""} loading="lazy" onError={(e) => (e.target.style.display = "none")} />
                 ) : (
                   <div className="ph" style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--muted)", fontSize: 12 }}>
                     No cover
@@ -162,7 +172,8 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
                         <img
                           key={u}
                           src={u}
-                          alt=""
+                          alt="Alternate cover option"
+                          loading="lazy"
                           className={cover === u ? "sel" : ""}
                           onClick={() => {
                             setCover(u);
@@ -220,6 +231,16 @@ export default function BookDetail({ book, shelves, shelfIndex, onClose, onSaved
                       <option value={language}>{language}</option>
                     )}
                   </select>
+                </div>
+              </div>
+              <div className="row2">
+                <div className="field">
+                  <label>Date started</label>
+                  <input type="date" value={dateStarted || ""} onChange={(e) => setDateStarted(e.target.value)} />
+                </div>
+                <div className="field">
+                  <label>Date finished</label>
+                  <input type="date" value={dateFinished || ""} onChange={(e) => setDateFinished(e.target.value)} />
                 </div>
               </div>
               <div className="field">
