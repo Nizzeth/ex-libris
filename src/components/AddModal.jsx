@@ -74,7 +74,10 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
           </div>
 
           <div className="add-tray">
-            <div className="tray-head" style={{ fontSize: 14, marginBottom: 8 }}>
+            <button className="btn primary tray-commit" disabled={!tray.length} onClick={commit}>
+              Add {tray.length || ""} to library
+            </button>
+            <div className="tray-head" style={{ fontSize: 14, margin: "10px 0 8px" }}>
               🧺 <b>{tray.length}</b> book(s) ready to add
             </div>
             <div id="trayList">
@@ -96,9 +99,6 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
                 </span>
               )}
             </div>
-            <button className="btn primary" disabled={!tray.length} onClick={commit}>
-              Add {tray.length || ""} to library
-            </button>
           </div>
         </div>
       </div>
