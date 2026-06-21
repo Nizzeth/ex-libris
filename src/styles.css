@@ -323,44 +323,66 @@ aside h2{color:#7a5a2e;letter-spacing:.14em}
 .authcard h1{font-size:30px;letter-spacing:1px}
 
 /* ======================================================
-   Open-book detail modal (subtle) — appended last so it
+   Open-book detail modal (theatrical) — appended last so it
    overrides the base/theme book-modal rules. To roll back,
    delete this block (or restore backups/styles.css.bak).
    ====================================================== */
 .modal.book-wide{
-  background:var(--parchment), linear-gradient(180deg,#5c3d23,#3f2a18);
+  background:var(--parchment), linear-gradient(180deg,#5c3d23,#3a2614);
   background-size:200px 200px, cover;
   background-blend-mode:soft-light, normal;
-  border:1px solid #2c1c10;
-  box-shadow:0 28px 66px rgba(22,13,5,.55);
+  border:1px solid #221409;
+  box-shadow:0 30px 70px rgba(20,12,5,.6);
 }
 .modal.book-wide .mh{
-  background:linear-gradient(180deg,#5e3e24,#4a3018);
-  border-bottom:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg,#5e3e24,#48301c);
+  border-bottom:1px solid rgba(201,162,76,.45);
 }
-.modal.book-wide .mh h3{color:#f0deac}
+.modal.book-wide .mh h3{color:#eccf93;letter-spacing:.5px}
 .modal.book-wide .mh .x{color:#e9d9ac}
-/* the open spread: pages float on the leather case with a gutter gap between */
+/* open spread on the leather, framed by double gold tooling */
 .body.book{
-  display:grid;grid-template-columns:1.05fr 0.95fr;gap:14px;
-  padding:16px 18px 20px;align-items:stretch;background:transparent;
+  position:relative;
+  display:grid;grid-template-columns:1.05fr 0.95fr;gap:18px;
+  padding:24px 26px 30px;align-items:stretch;background:transparent;
 }
-.body.book .page{padding:24px;position:relative}
+.body.book::before{content:"";position:absolute;inset:8px;border:1.5px solid rgba(201,162,76,.5);border-radius:5px;pointer-events:none;z-index:4}
+.body.book::after{content:"";position:absolute;inset:11px;border:.6px solid rgba(201,162,76,.3);border-radius:4px;pointer-events:none;z-index:4}
+.body.book .page{position:relative;padding:24px}
 .body.book .page.left{
-  border-right:none;border-radius:4px 2px 2px 4px;
-  background:var(--parchment), linear-gradient(90deg,#f8f1dc 0%,#f4edd6 64%,#e7dcbe 100%);
-  background-size:200px 200px, cover;background-blend-mode:soft-light, normal;
-  box-shadow:inset -13px 0 18px -12px rgba(54,35,14,.55), 0 2px 6px rgba(20,12,4,.3);
+  border-radius:5px 2px 2px 5px;
+  background:
+    linear-gradient(90deg, rgba(58,38,16,0) 58%, rgba(58,38,16,.18) 100%),
+    var(--parchment),
+    linear-gradient(90deg,#f8f1dc 0%,#f3ecd4 60%,#e1d3b2 100%);
+  background-size:auto, 200px 200px, cover;
+  background-blend-mode:normal, soft-light, normal;
+  box-shadow:
+    inset -16px 0 24px -14px rgba(48,30,12,.6),
+    inset 0 16px 14px -15px rgba(255,250,235,.5),
+    inset 0 -18px 16px -15px rgba(58,38,16,.3),
+    0 2px 6px rgba(20,12,4,.3),
+    0 4px 0 -1px #e6d8ba, 0 6px 0 -1px #d4c4a0, 0 8px 0 -1px #c3b48c;
 }
 .body.book .page.right{
-  border-radius:2px 4px 4px 2px;
-  background:var(--parchment), linear-gradient(90deg,#e7dcbe 0%,#f4edd6 36%,#f8f1dc 100%);
-  background-size:200px 200px, cover;background-blend-mode:soft-light, normal;
-  box-shadow:inset 13px 0 18px -12px rgba(54,35,14,.55), 0 2px 6px rgba(20,12,4,.3);
+  border-radius:2px 5px 5px 2px;
+  background:
+    linear-gradient(90deg, rgba(58,38,16,.18) 0%, rgba(58,38,16,0) 42%),
+    var(--parchment),
+    linear-gradient(90deg,#e1d3b2 0%,#f3ecd4 40%,#f8f1dc 100%);
+  background-size:auto, 200px 200px, cover;
+  background-blend-mode:normal, soft-light, normal;
+  box-shadow:
+    inset 16px 0 24px -14px rgba(48,30,12,.6),
+    inset 0 16px 14px -15px rgba(255,250,235,.5),
+    inset 0 -18px 16px -15px rgba(58,38,16,.3),
+    0 2px 6px rgba(20,12,4,.3),
+    0 4px 0 -1px #e6d8ba, 0 6px 0 -1px #d4c4a0, 0 8px 0 -1px #c3b48c;
 }
 .reading-notes{background:#fbf6e6;border-color:#e2d4b2}
 @media (max-width:680px){
-  .body.book{grid-template-columns:1fr;gap:0;padding:12px}
-  .body.book .page.left{box-shadow:none;border-radius:4px 4px 0 0;border-bottom:1px solid var(--line)}
-  .body.book .page.right{box-shadow:none;border-radius:0 0 4px 4px}
+  .body.book{grid-template-columns:1fr;gap:0;padding:14px}
+  .body.book::before,.body.book::after{display:none}
+  .body.book .page.left{box-shadow:none;border-radius:5px 5px 0 0;border-bottom:1px solid var(--line)}
+  .body.book .page.right{box-shadow:none;border-radius:0 0 5px 5px}
 }
