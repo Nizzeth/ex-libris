@@ -2,8 +2,9 @@
 // this module only tracks the list and toggles the attribute + persistence.
 export const THEMES = [
   { key: "archive", label: "Clean Archive", blurb: "Parchment & light leather" },
-  { key: "tower", label: "Wizard in the Tower", blurb: "Dark, candlelit, arcane" },
+  { key: "tower", label: "Wizard in the Tower", blurb: "Stone, candlelight, arcane" },
   { key: "desk", label: "Desk at the Library", blurb: "Warm wood & banker's lamp" },
+  { key: "starship", label: "Sci-Fi Console", blurb: "Brushed metal & laser glow" },
 ];
 
 const KEY = "exlibris_theme";

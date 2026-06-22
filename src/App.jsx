@@ -343,6 +343,11 @@ export default function App() {
         <details className="hmenu">
           <summary aria-label="More actions">⋯</summary>
           <div className="hmenu-pop">
+            <button onClick={(e) => { handleExport(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Export CSV</button>
+            <button onClick={(e) => { handleBackup(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Backup</button>
+            <button onClick={(e) => { document.getElementById("restoreFile").click(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Restore</button>
+            <button onClick={() => signOut()}>Sign out</button>
+            <div className="hmenu-sep" />
             <div className="hmenu-group">Theme</div>
             {THEMES.map((t) => (
               <button
@@ -354,11 +359,6 @@ export default function App() {
                 {profile?.theme === t.key && <span aria-hidden="true">✓</span>}
               </button>
             ))}
-            <div className="hmenu-sep" />
-            <button onClick={(e) => { handleExport(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Export CSV</button>
-            <button onClick={(e) => { handleBackup(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Backup</button>
-            <button onClick={(e) => { document.getElementById("restoreFile").click(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Restore</button>
-            <button onClick={() => signOut()}>Sign out</button>
           </div>
         </details>
         <input

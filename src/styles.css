@@ -449,9 +449,36 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
   --accent:#c79a3e; --accent2:#dcab48; --chip:#2e251b; --gold:#d8b257;
   --shadow:0 10px 26px rgba(0,0,0,.55); --read:#7c9148; --reading:#c98f3f; --danger:#d2756b;
 }
-[data-theme="tower"] body{background:var(--parchment), radial-gradient(135% 120% at 50% -10%, #251c12 0%, #17120d 55%, #0c0906 100%);background-size:240px 240px,cover;background-blend-mode:soft-light,normal}
-[data-theme="tower"] header.app{background:var(--parchment), linear-gradient(180deg,#3a2614,#1d130b);background-size:200px 200px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
-[data-theme="tower"] aside{background:var(--parchment), linear-gradient(180deg,#241c14,#1b140d);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6)}
+[data-theme="tower"] body{
+  background:
+    var(--parchment),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.32) 0 3px, transparent 3px 98px),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.36) 0 3px, transparent 3px 52px),
+    radial-gradient(120% 80% at 50% -6%, rgba(222,180,86,.14), rgba(222,180,86,0) 55%),
+    linear-gradient(180deg,#241a12,#110b06);
+  background-size:240px 240px, auto, auto, auto, cover;
+  background-blend-mode:soft-light, normal, normal, screen, normal;
+}
+[data-theme="tower"] header.app{
+  background:
+    var(--parchment),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.26) 0 2px, transparent 2px 78px),
+    linear-gradient(180deg,#2e2014,#15100a);
+  background-size:200px 200px, auto, cover;
+  background-blend-mode:soft-light, normal, normal;
+  border-bottom:2px solid var(--gold);
+  box-shadow:0 2px 18px rgba(222,180,86,.14);
+}
+[data-theme="tower"] aside{
+  background:
+    var(--parchment),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.30) 0 2px, transparent 2px 46px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.22) 0 2px, transparent 2px 120px),
+    linear-gradient(180deg,#221913,#16100a);
+  background-size:240px 240px, auto, auto, cover;
+  background-blend-mode:soft-light, normal, normal, normal;
+  box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6);
+}
 [data-theme="tower"] aside h2{color:var(--gold)}
 [data-theme="tower"] .card{background:var(--parchment), var(--panel);border-color:#3b2f22;box-shadow:0 2px 2px rgba(0,0,0,.45),0 14px 22px -10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.04)}
 [data-theme="tower"] .modal{background:var(--parchment), var(--panel);border:1px solid var(--gold)}
@@ -489,6 +516,59 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
 [data-theme="desk"] aside h2{color:#2f5d3a}
 [data-theme="desk"] .sharehead{background:var(--parchment), linear-gradient(180deg,#3a6a46,#244c2e);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
 [data-theme="desk"] .sharehead h1,[data-theme="desk"] .sharehead .by{color:#f0ead6}
+/* Desk: lighten text that sits on the dark wood desktop */
+[data-theme="desk"] .toolbar .title{color:#f4eddb}
+[data-theme="desk"] .empty h3{color:#f4eddb}
+[data-theme="desk"] .empty{color:#dccdb0}
+[data-theme="desk"] header.app .who{color:#f3e4bd}
+
+/* ======================================================
+   THEME — Sci-Fi Console (brushed metal + laser glow)
+   ====================================================== */
+[data-theme="starship"]{
+  --bg:#0d1419; --panel:#152029; --ink:#d8e8f0; --muted:#8298a4; --line:#283a45;
+  --accent:#1fb6c9; --accent2:#e0457e; --chip:#16242d; --gold:#37d2e6;
+  --shadow:0 10px 26px rgba(0,0,0,.6); --read:#39c08a; --reading:#e0a23b; --danger:#ef5b6b;
+}
+[data-theme="starship"] body{
+  background:
+    repeating-linear-gradient(0deg, rgba(55,210,230,.05) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgba(55,210,230,.05) 0 1px, transparent 1px 40px),
+    radial-gradient(120% 90% at 50% -10%, #15323b 0%, #0d1419 55%, #060a0d 100%);
+  background-size:auto, auto, cover;
+}
+[data-theme="starship"] header.app{background:linear-gradient(180deg,#1b2b34,#0f1a20);border-bottom:2px solid var(--gold);box-shadow:0 2px 16px rgba(55,210,230,.2)}
+[data-theme="starship"] header.app h1{color:#dff4f8;text-shadow:0 0 8px rgba(55,210,230,.5)}
+[data-theme="starship"] header.app .brand-mark{color:#37d2e6}
+[data-theme="starship"] header.app .who{color:#cfe9f0}
+[data-theme="starship"] aside{background:linear-gradient(180deg,#152029,#0f1820);box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6)}
+[data-theme="starship"] aside h2{color:var(--gold);text-shadow:0 0 6px rgba(55,210,230,.4)}
+[data-theme="starship"] .toolbar .title{color:#dff4f8;text-shadow:0 0 6px rgba(55,210,230,.35)}
+[data-theme="starship"] .empty h3{color:#cfe6ee}
+[data-theme="starship"] .empty{color:#8aa3b0}
+[data-theme="starship"] .card{background:var(--panel);border-color:#283a45;box-shadow:0 2px 2px rgba(0,0,0,.4),0 14px 22px -10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(55,210,230,.08)}
+[data-theme="starship"] .card:hover{box-shadow:0 3px 3px rgba(0,0,0,.4),0 0 18px rgba(55,210,230,.25),inset 0 0 0 1px rgba(55,210,230,.22)}
+[data-theme="starship"] .modal{background:var(--panel);border:1px solid var(--gold)}
+[data-theme="starship"] .modal .mh{background:transparent;border-bottom:1px solid var(--line)}
+[data-theme="starship"] .btn{background:#182630;border-color:#2c4350;color:var(--ink)}
+[data-theme="starship"] .btn.primary{background:linear-gradient(180deg,#22c2d6,#138596);border-color:#0c5c68;color:#04181c}
+[data-theme="starship"] .tag{background:var(--chip);border-color:var(--line);color:var(--ink)}
+[data-theme="starship"] .tag.sel{background:var(--accent);border-color:var(--accent);color:#04181c}
+[data-theme="starship"] input:not([type=checkbox]),[data-theme="starship"] select,[data-theme="starship"] textarea{background:#0f1a20 !important;color:var(--ink) !important;border-color:var(--line) !important}
+[data-theme="starship"] .body.book input:not([type=checkbox]),[data-theme="starship"] .body.book select,[data-theme="starship"] .body.book textarea{background:#fff !important;color:#33291c !important;border-color:#d8c8a6 !important}
+[data-theme="starship"] .toast{background:#152029;color:#dff4f8;border:1px solid var(--gold)}
+[data-theme="starship"] .sharehead{background:linear-gradient(180deg,#1b2b34,#0f1a20);border-bottom:2px solid var(--gold)}
+[data-theme="starship"] .sharehead h1{color:#dff4f8;text-shadow:0 0 8px rgba(55,210,230,.5)}
+[data-theme="starship"] .sharehead .by{color:#a9c6d2}
+[data-theme="starship"] .authcard{background:var(--panel);border:1px solid var(--gold)}
+[data-theme="starship"] .authcard h1{color:#dff4f8}
+[data-theme="starship"] .hmenu-pop{background:var(--panel);border-color:var(--line)}
+[data-theme="starship"] header.app .hmenu-pop button{color:var(--ink)}
+[data-theme="starship"] header.app .hmenu-pop button:hover{background:#1d2e38}
+[data-theme="starship"] .stat-card{background:#0f1a20}
+[data-theme="starship"] .sb-track{background:#22343f}
+[data-theme="starship"] .add-tray{background:linear-gradient(270deg,#152029,#0f1820)}
+[data-theme="starship"] .banner{background:#11242c;border-color:var(--gold);color:#bfe9f0}
 
 /* share page branding */
 .share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
