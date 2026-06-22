@@ -588,23 +588,37 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
   background:var(--parchment), radial-gradient(130% 110% at 50% -10%, #f3ecfb 0%, #ece5f7 50%, #dccff0 100%);
   background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
 }
-[data-theme="zoie"] header.app{background:linear-gradient(180deg,#8b46f0,#5b21b6);border-bottom:2px solid var(--gold)}
-[data-theme="zoie"] header.app h1{color:#f5ecff}
+[data-theme="zoie"] header.app{background:linear-gradient(180deg,#574a73,#372a4f);border-bottom:2px solid #6e5a93}
+[data-theme="zoie"] header.app h1{color:#f1e9fb}
 [data-theme="zoie"] header.app .brand-mark{color:#e9d7ff}
 [data-theme="zoie"] aside{
-  background:var(--parchment), linear-gradient(180deg,#f4eefc,#e8defa);
+  background:var(--parchment), linear-gradient(180deg,#f2ead4,#e9dec3);
   background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
-  box-shadow:inset -12px 0 18px -16px rgba(80,40,120,.3);
+  box-shadow:inset -12px 0 18px -16px rgba(60,40,16,.45);
 }
 [data-theme="zoie"] aside h2{color:#7c3aed}
 [data-theme="zoie"] .btn.primary{background:linear-gradient(180deg,#8b46f0,#6d28d9);border-color:#5b21b6;color:#f3e9ff}
 [data-theme="zoie"] .tag.sel{background:var(--accent);border-color:var(--accent);color:#f3e9ff}
 [data-theme="zoie"] .sharehead{
-  background:var(--parchment), linear-gradient(180deg,#8b46f0,#5b21b6);
+  background:var(--parchment), linear-gradient(180deg,#574a73,#372a4f);
   background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
-  border-bottom:2px solid var(--gold);
+  border-bottom:2px solid #6e5a93;
 }
-[data-theme="zoie"] .sharehead h1,[data-theme="zoie"] .sharehead .by{color:#f3e9ff}
+[data-theme="zoie"] .sharehead h1,[data-theme="zoie"] .sharehead .by{color:#f1e9fb}
+/* Zoie: dark-purple book pop-up (instead of the leather/brown case) */
+[data-theme="zoie"] .modal.book-wide{
+  background:var(--parchment), linear-gradient(180deg,#3f2c57,#241636);
+  background-size:200px 200px, cover;background-blend-mode:soft-light, normal;
+  border:1px solid #1c1230;
+}
+[data-theme="zoie"] .modal.book-wide .mh{
+  background:linear-gradient(180deg,#43305c,#2c1c45);
+  border-bottom:1px solid rgba(157,78,221,.5);
+}
+[data-theme="zoie"] .modal.book-wide .mh h3{color:#e9d9ff}
+[data-theme="zoie"] .modal.book-wide .mh .x{color:#e9d9ff}
+[data-theme="zoie"] .body.book::before{border-color:rgba(199,160,240,.5)}
+[data-theme="zoie"] .body.book::after{border-color:rgba(199,160,240,.3)}
 
 /* share page branding */
 .share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
