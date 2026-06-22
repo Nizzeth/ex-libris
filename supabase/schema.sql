@@ -59,6 +59,7 @@ create table if not exists public.shelves (
   is_public   boolean not null default false,
   share_slug  text unique not null default public.gen_slug(),
   sort_order  int not null default 0,
+  color       text default '',
   created_at  timestamptz not null default now()
 );
 create index if not exists shelves_user_idx on public.shelves(user_id);

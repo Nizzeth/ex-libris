@@ -195,6 +195,16 @@ export default function App() {
     }
   }
 
+  async function reorderShelves(orderedIds) {
+    setShelves((prev) => orderedIds.map((id) => prev.find((s) => s.id === id)).filter(Boolean));
+    try {
+      await db.reorderShelves(orderedIds);
+    } catch (e) {
+      console.error(e);
+      reloadAll();
+    }
+  }
+
   async function moveBooksToShelf(shelfId, ids) {
     if (!shelfId || !ids.length) return;
     try {
@@ -403,6 +413,7 @@ export default function App() {
           setFilters={setFilters}
           onChange={reloadAll}
           onDropBooks={moveBooksToShelf}
+          onReorderShelves={reorderShelves}
         />
         <main>
           <div className="toolbar">

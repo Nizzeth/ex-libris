@@ -53,6 +53,8 @@ If you already ran `schema.sql` before these features existed, run the migration
 - `migration-003.sql` — adds **borrowed / lent** loan tracking.
 - `migration-004.sql` — adds **reading dates** (started / finished).
 - `migration-005.sql` — adds the per-account **theme** preference.
+- `migration-006.sql` — adds the per-account **default language** for added books.
+- `migration-007.sql` — adds **shelf colours** (rename & reorder need no migration).
 
 Fresh installs get everything from `schema.sql` and can skip this.
 

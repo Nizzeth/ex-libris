@@ -7,6 +7,16 @@ function shareUrl(kind, slug) {
   return `${window.location.origin}/share/${kind}/${slug}`;
 }
 
+const SHELF_COLORS = ["#7c4d2e", "#7a2e2e", "#6b7c3f", "#b9824f", "#8a6db0", "#2e6f8e", "#c2562a", "#9d4edd", "#3b6d2e", "#5f5e5a"];
+
+function BookmarkIcon({ color }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", fill: color || "var(--accent)" }}>
+      <path d="M6 2h12a1 1 0 0 1 1 1v18l-7-4-7 4V3a1 1 0 0 1 1-1z" />
+    </svg>
+  );
+}
+
 export default function Sidebar({
   open,
   onNavigate,
@@ -20,6 +30,7 @@ export default function Sidebar({
   setFilters,
   onChange,
   onDropBooks,
+  onReorderShelves,
 }) {
   const selectShelf = (id) => {
     setActiveShelf(id);
@@ -27,12 +38,21 @@ export default function Sidebar({
   };
   const [newShelf, setNewShelf] = useState("");
   const [dropShelf, setDropShelf] = useState(null);
+  const [editingShelfId, setEditingShelfId] = useState(null);
+  const [nameDraft, setNameDraft] = useState("");
+  const [colorShelf, setColorShelf] = useState(null);
   const langs = distinctLanguages(books);
   const tags = distinctTags(books);
 
+  // Drop can carry either a dragged shelf (reorder) or books (add to shelf).
   function handleDrop(e, shelfId) {
     e.preventDefault();
     setDropShelf(null);
+    const draggedShelf = e.dataTransfer.getData("application/shelf-id");
+    if (draggedShelf) {
+      reorderTo(draggedShelf, shelfId);
+      return;
+    }
     const raw = e.dataTransfer.getData("application/book-ids");
     if (!raw) return;
     try {
@@ -40,6 +60,39 @@ export default function Sidebar({
       if (Array.isArray(ids) && ids.length) onDropBooks?.(shelfId, ids);
     } catch {
       /* ignore */
+    }
+  }
+
+  function reorderTo(fromId, toId) {
+    if (!fromId || fromId === toId) return;
+    const ids = shelves.map((x) => x.id);
+    const fi = ids.indexOf(fromId);
+    const ti = ids.indexOf(toId);
+    if (fi < 0 || ti < 0) return;
+    ids.splice(ti, 0, ids.splice(fi, 1)[0]);
+    onReorderShelves?.(ids);
+  }
+
+  async function saveRename(s) {
+    const name = nameDraft.trim();
+    setEditingShelfId(null);
+    if (!name || name === s.name) return;
+    if (shelves.some((x) => x.id !== s.id && x.name.toLowerCase() === name.toLowerCase())) return toast("Shelf exists");
+    try {
+      await db.updateShelf(s.id, { name });
+      onChange();
+    } catch {
+      toast("Could not rename");
+    }
+  }
+
+  async function setShelfColor(s, color) {
+    setColorShelf(null);
+    try {
+      await db.updateShelf(s.id, { color });
+      onChange();
+    } catch {
+      toast("Could not set color");
     }
   }
 
@@ -113,14 +166,22 @@ export default function Sidebar({
         <span>All books</span>
         <span className="count">{books.length}</span>
       </div>
-      {shelves.map((s) => (
+      {shelves.map((s) => {
+        const editing = editingShelfId === s.id;
+        return (
         <div
           key={s.id}
           className={"shelf" + (activeShelf === s.id ? " active" : "") + (dropShelf === s.id ? " droptarget" : "")}
-          onClick={() => selectShelf(s.id)}
+          draggable={!editing}
+          onClick={() => !editing && selectShelf(s.id)}
           onContextMenu={(e) => {
             e.preventDefault();
             removeShelf(s);
+          }}
+          onDragStart={(e) => {
+            if (editing) { e.preventDefault(); return; }
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("application/shelf-id", s.id);
           }}
           onDragOver={(e) => {
             e.preventDefault();
@@ -128,10 +189,40 @@ export default function Sidebar({
           }}
           onDragLeave={() => setDropShelf((d) => (d === s.id ? null : d))}
           onDrop={(e) => handleDrop(e, s.id)}
-          title="Right-click to delete · drop books here to add them"
+          title="Drag to reorder · double-click name to rename · right-click to delete"
         >
-          <span>🔖</span>
-          <span>{s.name}</span>
+          <span
+            className="shelf-icon"
+            role="button"
+            tabIndex={0}
+            aria-label={`Change colour of ${s.name}`}
+            title="Change colour"
+            onClick={(e) => { e.stopPropagation(); setColorShelf((c) => (c === s.id ? null : s.id)); }}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.stopPropagation(); e.preventDefault(); setColorShelf((c) => (c === s.id ? null : s.id)); } }}
+          >
+            <BookmarkIcon color={s.color} />
+          </span>
+          {editing ? (
+            <input
+              className="shelf-rename"
+              autoFocus
+              value={nameDraft}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onBlur={() => saveRename(s)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveRename(s);
+                if (e.key === "Escape") setEditingShelfId(null);
+              }}
+            />
+          ) : (
+            <span
+              className="shelf-name"
+              onDoubleClick={(e) => { e.stopPropagation(); setNameDraft(s.name); setEditingShelfId(s.id); }}
+            >
+              {s.name}
+            </span>
+          )}
           {s.is_public && (
             <span
               className="share copy"
@@ -175,8 +266,25 @@ export default function Sidebar({
             {s.is_public ? "🔓" : "🔒"}
           </span>
           <span className="count">{(shelfIndex.get(s.id) || new Set()).size}</span>
+          {colorShelf === s.id && (
+            <div className="color-pop" onClick={(e) => e.stopPropagation()}>
+              {SHELF_COLORS.map((c) => (
+                <button
+                  key={c}
+                  className="swatch"
+                  style={{ background: c }}
+                  aria-label={"Set colour " + c}
+                  onClick={() => setShelfColor(s, c)}
+                />
+              ))}
+              <button className="swatch swatch-clear" onClick={() => setShelfColor(s, "")} title="Default" aria-label="Default colour">
+                ○
+              </button>
+            </div>
+          )}
         </div>
-      ))}
+        );
+      })}
       <div className="miniadd">
         <input
           value={newShelf}

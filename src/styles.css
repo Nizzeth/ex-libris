@@ -43,7 +43,15 @@ header.app .who-edit::placeholder{color:rgba(255,255,255,.6)}
 .layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px)}
 aside{background:var(--panel);border-right:1px solid var(--line);padding:16px 12px}
 aside h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:18px 6px 8px}
-.shelf{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;user-select:none}
+.shelf{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;user-select:none;position:relative}
+.shelf-icon{display:inline-flex;align-items:center;flex:none;cursor:pointer;border-radius:4px}
+.shelf-icon:hover{background:rgba(0,0,0,.06)}
+.shelf-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shelf-rename{flex:1;min-width:0;padding:2px 6px;border:1px solid var(--accent2);border-radius:6px;font-size:14px;background:#fff;color:#2b2622}
+.color-pop{position:absolute;top:100%;left:8px;margin-top:4px;z-index:30;background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:6px;display:grid;grid-template-columns:repeat(6,1fr);gap:5px;width:max-content}
+.swatch{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.2);cursor:pointer;padding:0}
+.swatch:hover{transform:scale(1.12)}
+.swatch-clear{background:#fff;color:var(--muted);font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center}
 .shelf:hover{background:var(--chip)}
 .shelf.active{background:var(--accent2);color:#fff}
 .shelf .count{margin-left:auto;font-size:12px;opacity:.7}

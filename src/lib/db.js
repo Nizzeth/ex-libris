@@ -167,13 +167,24 @@ export async function listShelves() {
 
 export async function addShelf(name) {
   const { data: u } = await supabase.auth.getUser();
+  const { data: maxRow } = await supabase
+    .from("shelves")
+    .select("sort_order")
+    .eq("user_id", u.user.id)
+    .order("sort_order", { ascending: false })
+    .limit(1);
+  const sort_order = maxRow && maxRow[0] ? maxRow[0].sort_order + 1 : 0;
   const { data, error } = await supabase
     .from("shelves")
-    .insert({ user_id: u.user.id, name })
+    .insert({ user_id: u.user.id, name, sort_order })
     .select()
     .single();
   if (error) throw error;
   return data;
+}
+
+export async function reorderShelves(orderedIds) {
+  await Promise.all(orderedIds.map((id, i) => supabase.from("shelves").update({ sort_order: i }).eq("id", id)));
 }
 
 export async function updateShelf(id, patch) {
