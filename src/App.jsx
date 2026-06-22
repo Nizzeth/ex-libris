@@ -10,7 +10,7 @@ import AddModal from "./components/AddModal.jsx";
 import BookDetail from "./components/BookDetail.jsx";
 import StatsModal from "./components/StatsModal.jsx";
 import { Toaster, toast } from "./components/Toast.jsx";
-import { THEMES, applyTheme } from "./lib/themes.js";
+import { applyTheme, themesForUser } from "./lib/themes.js";
 import Logo from "./components/Logo.jsx";
 
 export default function App() {
@@ -358,7 +358,7 @@ export default function App() {
             <button onClick={() => signOut()}>Sign out</button>
             <div className="hmenu-sep" />
             <div className="hmenu-group">Theme</div>
-            {THEMES.map((t) => (
+            {themesForUser(me.email).map((t) => (
               <button
                 key={t.key}
                 className={"hmenu-theme" + (profile?.theme === t.key ? " on" : "")}

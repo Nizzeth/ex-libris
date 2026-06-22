@@ -576,6 +576,36 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
 [data-theme="starship"] .add-tray{background:linear-gradient(270deg,#152029,#0f1820)}
 [data-theme="starship"] .banner{background:#11242c;border-color:var(--gold);color:#bfe9f0}
 
+/* ======================================================
+   THEME — Zoie's World (account-gated; shades of purple)
+   ====================================================== */
+[data-theme="zoie"]{
+  --bg:#ece5f7; --panel:#f8f4fd; --ink:#3a2456; --muted:#86769f; --line:#d9ccee; --chip:#e7dcf7; --gold:#9d4edd;
+  --accent:#7c3aed; --accent2:#a855f7;
+  --shadow:0 6px 18px rgba(60,30,90,.18); --read:#6d28d9; --reading:#9333ea; --danger:#c026a3;
+}
+[data-theme="zoie"] body{
+  background:var(--parchment), radial-gradient(130% 110% at 50% -10%, #f3ecfb 0%, #ece5f7 50%, #dccff0 100%);
+  background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
+}
+[data-theme="zoie"] header.app{background:linear-gradient(180deg,#8b46f0,#5b21b6);border-bottom:2px solid var(--gold)}
+[data-theme="zoie"] header.app h1{color:#f5ecff}
+[data-theme="zoie"] header.app .brand-mark{color:#e9d7ff}
+[data-theme="zoie"] aside{
+  background:var(--parchment), linear-gradient(180deg,#f4eefc,#e8defa);
+  background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
+  box-shadow:inset -12px 0 18px -16px rgba(80,40,120,.3);
+}
+[data-theme="zoie"] aside h2{color:#7c3aed}
+[data-theme="zoie"] .btn.primary{background:linear-gradient(180deg,#8b46f0,#6d28d9);border-color:#5b21b6;color:#f3e9ff}
+[data-theme="zoie"] .tag.sel{background:var(--accent);border-color:var(--accent);color:#f3e9ff}
+[data-theme="zoie"] .sharehead{
+  background:var(--parchment), linear-gradient(180deg,#8b46f0,#5b21b6);
+  background-size:240px 240px,cover;background-blend-mode:soft-light,normal;
+  border-bottom:2px solid var(--gold);
+}
+[data-theme="zoie"] .sharehead h1,[data-theme="zoie"] .sharehead .by{color:#f3e9ff}
+
 /* share page branding */
 .share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
 .share-logo.foot{margin:0}
