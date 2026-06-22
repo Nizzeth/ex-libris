@@ -451,34 +451,24 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
 }
 [data-theme="tower"] body{
   background:
-    var(--parchment),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.32) 0 3px, transparent 3px 98px),
-    repeating-linear-gradient(0deg, rgba(0,0,0,.36) 0 3px, transparent 3px 52px),
-    radial-gradient(120% 80% at 50% -6%, rgba(222,180,86,.14), rgba(222,180,86,0) 55%),
-    linear-gradient(180deg,#241a12,#110b06);
-  background-size:240px 240px, auto, auto, auto, cover;
-  background-blend-mode:soft-light, normal, normal, screen, normal;
+    url('/tower-wall.svg'),
+    radial-gradient(130% 90% at 50% -8%, rgba(222,180,86,.12), rgba(222,180,86,0) 55%),
+    linear-gradient(180deg,#241a12,#0f0a05);
+  background-size:200px 112px, cover, cover;
+  background-repeat:repeat, no-repeat, no-repeat;
+  background-blend-mode:normal, screen, normal;
+  background-attachment:fixed, fixed, fixed;
 }
-[data-theme="tower"] header.app{
-  background:
-    var(--parchment),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.26) 0 2px, transparent 2px 78px),
-    linear-gradient(180deg,#2e2014,#15100a);
-  background-size:200px 200px, auto, cover;
-  background-blend-mode:soft-light, normal, normal;
-  border-bottom:2px solid var(--gold);
-  box-shadow:0 2px 18px rgba(222,180,86,.14);
+[data-theme="tower"] body::before{
+  content:"";position:fixed;right:0;bottom:0;z-index:-1;pointer-events:none;
+  width:min(46vw,420px);height:min(62vh,460px);
+  background:url('/tower-scene.svg') no-repeat right bottom;background-size:contain;
+  opacity:.62;
+  -webkit-mask-image:radial-gradient(135% 135% at 100% 100%, #000 42%, transparent 76%);
+  mask-image:radial-gradient(135% 135% at 100% 100%, #000 42%, transparent 76%);
 }
-[data-theme="tower"] aside{
-  background:
-    var(--parchment),
-    repeating-linear-gradient(0deg, rgba(0,0,0,.30) 0 2px, transparent 2px 46px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.22) 0 2px, transparent 2px 120px),
-    linear-gradient(180deg,#221913,#16100a);
-  background-size:240px 240px, auto, auto, cover;
-  background-blend-mode:soft-light, normal, normal, normal;
-  box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6);
-}
+[data-theme="tower"] header.app{background:var(--parchment), linear-gradient(180deg,#3a2614,#1d130b);background-size:200px 200px,cover;background-blend-mode:soft-light,normal;border-bottom:2px solid var(--gold)}
+[data-theme="tower"] aside{background:var(--parchment), linear-gradient(180deg,#241c14,#1b140d);background-size:240px 240px,cover;background-blend-mode:soft-light,normal;box-shadow:inset -12px 0 18px -16px rgba(0,0,0,.6)}
 [data-theme="tower"] aside h2{color:var(--gold)}
 [data-theme="tower"] .card{background:var(--parchment), var(--panel);border-color:#3b2f22;box-shadow:0 2px 2px rgba(0,0,0,.45),0 14px 22px -10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.04)}
 [data-theme="tower"] .modal{background:var(--parchment), var(--panel);border:1px solid var(--gold)}
