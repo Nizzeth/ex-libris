@@ -456,6 +456,7 @@ header.app .brand-mark{color:#f3e4bd;flex:none}
 .hmenu-sep{height:1px;background:var(--line);margin:6px 4px}
 header.app .hmenu-theme{display:flex;align-items:center;justify-content:space-between;gap:12px}
 header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
+.hmenu-stats{display:none}
 
 /* ======================================================
    THEME — Wizard in the Tower (dark, candlelit)
@@ -619,6 +620,9 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
 [data-theme="zoie"] .modal.book-wide .mh .x{color:#e9d9ff}
 [data-theme="zoie"] .body.book::before{border-color:rgba(199,160,240,.5)}
 [data-theme="zoie"] .body.book::after{border-color:rgba(199,160,240,.3)}
+/* Zoie: active shelf highlight matches the matte banner; cover view on notes-cream */
+[data-theme="zoie"] .shelf.active{background:#574a73;color:#f1e9fb}
+[data-theme="zoie"] main{background:#fbf6e6}
 
 /* share page branding */
 .share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
@@ -635,6 +639,8 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
   header.app{flex-wrap:wrap;row-gap:8px}
 }
 @media (max-width:560px){
+  .stats-btn{display:none}
+  .hmenu-stats{display:block}
   .toolbar input.search{flex:1 1 130px;min-width:110px;width:auto}
   header.app .who{max-width:128px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .rrow{gap:8px}

@@ -347,7 +347,7 @@ export default function App() {
             {profile?.display_name || me.email}
           </button>
         )}
-        <button onClick={() => setShowStats(true)}>Stats</button>
+        <button className="stats-btn" onClick={() => setShowStats(true)}>Stats</button>
         <button onClick={() => setShowAdd(true)}>+ Add books</button>
         <details className="hmenu">
           <summary aria-label="More actions">⋯</summary>
@@ -356,6 +356,12 @@ export default function App() {
             <button onClick={(e) => { handleBackup(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Backup</button>
             <button onClick={(e) => { document.getElementById("restoreFile").click(); e.currentTarget.closest("details")?.removeAttribute("open"); }}>Restore</button>
             <button onClick={() => signOut()}>Sign out</button>
+            <button
+              className="hmenu-stats"
+              onClick={(e) => { setShowStats(true); e.currentTarget.closest("details")?.removeAttribute("open"); }}
+            >
+              Stats
+            </button>
             <div className="hmenu-sep" />
             <div className="hmenu-group">Theme</div>
             {themesForUser(me.email).map((t) => (
