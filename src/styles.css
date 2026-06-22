@@ -564,3 +564,19 @@ header.app .hmenu-theme.on{color:var(--accent);font-weight:700}
 .share-logo{color:var(--accent2);display:block;margin:0 auto 6px}
 .share-logo.foot{margin:0}
 .sharefoot{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);padding:28px 20px;font-size:13px}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.pager .note{text-align:center}
+.tray-deflang{margin-bottom:10px}
+.tray-deflang label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.tray-deflang select{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:13px}
+
+/* mobile refinements */
+@media (max-width:560px){
+  .toolbar input.search{flex:1 1 130px;min-width:110px;width:auto}
+  header.app .who{max-width:128px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rrow{gap:8px}
+  .rrow .btn{padding:6px 9px}
+  .modal .body{padding:16px}
+  .field input,.field select,.field textarea{min-height:36px}
+  .toolbar select,.toolbar .btn,.dirtoggle{min-height:36px}
+}

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="parch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e8ce"/><stop offset="1" stop-color="#e2d2ac"/></linearGradient>
+    <linearGradient id="leather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c4d2a"/><stop offset="1" stop-color="#553318"/></linearGradient>
+    <linearGradient id="seal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a522e"/><stop offset="1" stop-color="#553016"/></linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="630" fill="url(#leather)"/>
+  <rect x="34" y="34" width="1132" height="562" rx="16" fill="url(#parch)"/>
+  <rect x="54" y="54" width="1092" height="522" rx="9" fill="none" stroke="#b58a3c" stroke-width="3"/>
+  <rect x="63" y="63" width="1074" height="504" rx="6" fill="none" stroke="#b58a3c" stroke-width="1" opacity="0.55"/>
+
+  <circle cx="246" cy="300" r="128" fill="url(#seal)" stroke="#43260f" stroke-width="5"/>
+  <circle cx="246" cy="300" r="112" fill="none" stroke="#b58a3c" stroke-width="2" opacity="0.5"/>
+  <g transform="translate(148,202) scale(8.2)" fill="none" stroke="#ecd49a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 4C13 5 8 9 6 16l2 2c7-2 11-7 12-14z"/>
+    <path d="M17.5 6.5 9 15"/>
+    <path d="M6 16l-2 4 4-2"/>
+    <circle cx="4.1" cy="19.9" r="0.85" fill="#ecd49a" stroke="none"/>
+  </g>
+
+  <text x="430" y="278" font-family="DejaVu Serif" font-weight="bold" font-size="90" fill="#5a3a1d">Ex Libris</text>
+  <text x="434" y="342" font-family="DejaVu Serif" font-style="italic" font-size="44" fill="#7a5a2e">Your personal archive</text>
+  <text x="434" y="400" font-family="DejaVu Serif" font-size="32" fill="#9a7a44">ex-libris.com.ar</text>
+
+  <g>
+    <rect x="434" y="452" width="34" height="92" rx="2" fill="#7a2e2e"/>
+    <rect x="472" y="438" width="30" height="106" rx="2" fill="#6b7c3f"/>
+    <rect x="506" y="458" width="38" height="86" rx="2" fill="#b9824f"/>
+    <rect x="548" y="446" width="28" height="98" rx="2" fill="#8a6db0"/>
+    <rect x="580" y="460" width="34" height="84" rx="2" fill="#2e6f8e"/>
+    <rect x="618" y="442" width="30" height="102" rx="2" fill="#5a3a1d"/>
+  </g>
+</svg>

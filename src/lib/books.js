@@ -141,23 +141,24 @@ export async function lookupISBN(isbn) {
   return (await fetchOpenLibISBN(clean)) || (await fetchGoogleISBN(clean));
 }
 
-export async function searchCatalog(q) {
+export async function searchCatalog(q, page = 1, limit = 20) {
+  // Lean field list keeps the response small and fast.
   const r = await fetch(
-    `https://openlibrary.org/search.json?q=${encodeURIComponent(
-      q
-    )}&limit=12&fields=title,author_name,first_publish_year,isbn,cover_i,publisher,language`
+    `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&page=${page}&limit=${limit}` +
+      `&fields=title,author_name,first_publish_year,isbn,cover_i,language`
   );
   const d = await r.json();
-  return (d.docs || []).map((doc) => ({
+  const results = (d.docs || []).map((doc) => ({
     title: doc.title,
     authors: (doc.author_name || []).slice(0, 3).join(", "),
     isbn13: (doc.isbn || []).find((x) => x.length === 13) || "",
     isbn10: (doc.isbn || []).find((x) => x.length === 10) || "",
     language: doc.language && doc.language[0] ? langName(doc.language[0]) : "",
     published: doc.first_publish_year || "",
-    publisher: (doc.publisher || [])[0] || "",
+    publisher: "",
     cover_url: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : null,
   }));
+  return { results, numFound: d.numFound ?? d.num_found ?? results.length, page, limit };
 }
 
 // Find alternate cover images for a book from Open Library editions.

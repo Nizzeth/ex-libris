@@ -26,6 +26,7 @@ create table if not exists public.profiles (
   library_slug    text unique not null default public.gen_slug(),
   library_public  boolean not null default false,
   theme           text not null default 'archive',
+  default_language text not null default '',
   created_at      timestamptz not null default now()
 );
 

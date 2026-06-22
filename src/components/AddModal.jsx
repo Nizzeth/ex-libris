@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as db from "../lib/db.js";
 import { LANGS, lookupISBN, searchCatalog, parseBookCSV, coverUrl, STATUSES } from "../lib/books.js";
 import { toast } from "./Toast.jsx";
+
+const bookKey = (b) =>
+  (b.isbn13 || b.isbn10 || `${b.title || ""}|${b.authors || ""}`).toString().toLowerCase();
 
 const ZXING_CDN = "https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js";
 
@@ -17,14 +20,20 @@ function loadScript(src) {
   });
 }
 
-export default function AddModal({ shelves, onClose, onCommitted }) {
+export default function AddModal({ shelves, existing, defaultLanguage, onSetDefaultLanguage, onClose, onCommitted }) {
   const [tab, setTab] = useState("isbn");
   const [tray, setTray] = useState([]);
   const [committing, setCommitting] = useState(false);
 
-  const key = (b) => b.isbn13 || b.isbn10 || `${b.title}|${b.authors}`.toLowerCase();
-  function addToTray(b) {
-    setTray((prev) => (prev.some((x) => key(x) === key(b)) ? prev : [...prev, b]));
+  const existingKeys = useMemo(() => new Set((existing || []).map(bookKey)), [existing]);
+  const isAdded = (b) => existingKeys.has(bookKey(b)) || tray.some((x) => bookKey(x) === bookKey(b));
+
+  // fromManual books keep the user's explicit language choice; everything else
+  // adopts the per-user default language (overriding the often-messy catalog value).
+  function addToTray(b, fromManual = false) {
+    const language = fromManual ? b.language : defaultLanguage || b.language || "";
+    const book = { ...b, language };
+    setTray((prev) => (prev.some((x) => bookKey(x) === bookKey(book)) ? prev : [...prev, book]));
   }
 
   useEffect(() => {
@@ -75,14 +84,29 @@ export default function AddModal({ shelves, onClose, onCommitted }) {
             ))}
           </div>
 
-          {tab === "scan" && <ScanTab onFound={addToTray} active />}
-          {tab === "isbn" && <IsbnTab onAdd={addToTray} />}
-          {tab === "search" && <SearchTab onAdd={addToTray} />}
-          {tab === "csv" && <CsvTab shelves={shelves} onDone={onCommitted} />}
-          {tab === "manual" && <ManualTab onAdd={addToTray} />}
+          {tab === "scan" && <ScanTab onFound={(b) => addToTray(b)} active />}
+          {tab === "isbn" && <IsbnTab onAdd={(b) => addToTray(b)} />}
+          {tab === "search" && <SearchTab onAdd={(b) => addToTray(b)} isAdded={isAdded} />}
+          {tab === "csv" && <CsvTab shelves={shelves} defaultLanguage={defaultLanguage} onDone={onCommitted} />}
+          {tab === "manual" && <ManualTab onAdd={(b) => addToTray(b, true)} defaultLanguage={defaultLanguage} />}
           </div>
 
           <div className="add-tray">
+            <div className="tray-deflang">
+              <label htmlFor="deflang">Language for new books</label>
+              <select
+                id="deflang"
+                value={defaultLanguage}
+                onChange={(e) => onSetDefaultLanguage?.(e.target.value)}
+              >
+                <option value="">Auto (from catalog)</option>
+                {LANGS.map((l) => (
+                  <option key={l.code} value={l.name}>
+                    {l.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button className="btn primary tray-commit" disabled={!tray.length || committing} onClick={commit}>
               {committing ? (
                 <>
@@ -295,44 +319,71 @@ function IsbnTab({ onAdd }) {
 }
 
 /* ---------------- Search ---------------- */
-function SearchTab({ onAdd }) {
+const SEARCH_LIMIT = 20;
+function SearchTab({ onAdd, isAdded }) {
   const [q, setQ] = useState("");
-  const [results, setResults] = useState([]);
+  const [data, setData] = useState(null); // { results, numFound, page, limit }
   const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  async function go() {
+  async function go(page = 1) {
     if (!q.trim()) return;
+    setBusy(true);
     setMsg("Searching Open Library…");
-    setResults([]);
     try {
-      const r = await searchCatalog(q.trim());
-      setMsg(r.length ? "" : "No results.");
-      setResults(r);
+      const d = await searchCatalog(q.trim(), page, SEARCH_LIMIT);
+      setData(d);
+      setMsg(d.results.length ? "" : "No results.");
     } catch {
+      setData(null);
       setMsg("Search failed (network).");
     }
+    setBusy(false);
   }
+
+  // Open Library can report huge totals; cap browsable pages for sanity.
+  const totalPages = data ? Math.max(1, Math.ceil(Math.min(data.numFound, 1000) / SEARCH_LIMIT)) : 1;
 
   return (
     <div>
       <div className="field">
         <label>Search by title or author</label>
-        <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && go()} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && go(1)} />
       </div>
-      <button className="btn primary" onClick={go}>
-        Search
+      <button className="btn primary" disabled={busy} onClick={() => go(1)}>
+        {busy ? "Searching…" : "Search"}
       </button>
       {msg && <div className="note" style={{ marginTop: 8 }}>{msg}</div>}
-      <div className="results">
-        {results.map((b, i) => (
-          <ResultRow key={i} b={b} onAdd={() => { onAdd(b); toast("Added to tray"); }} />
-        ))}
-      </div>
+      {data && data.results.length > 0 && (
+        <>
+          <div className="results">
+            {data.results.map((b, i) => (
+              <ResultRow
+                key={i}
+                b={b}
+                added={isAdded?.(b)}
+                onAdd={() => { onAdd(b); toast("Added to tray"); }}
+              />
+            ))}
+          </div>
+          <div className="pager">
+            <button className="btn" disabled={busy || data.page <= 1} onClick={() => go(data.page - 1)}>
+              ‹ Prev
+            </button>
+            <span className="note">
+              Page {data.page} of {totalPages} · {data.numFound.toLocaleString()} found
+            </span>
+            <button className="btn" disabled={busy || data.page >= totalPages} onClick={() => go(data.page + 1)}>
+              Next ›
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function ResultRow({ b, onAdd }) {
+function ResultRow({ b, onAdd, added }) {
   const [broken, setBroken] = useState(false);
   const cu = coverUrl(b);
   return (
@@ -346,15 +397,21 @@ function ResultRow({ b, onAdd }) {
           {b.language ? " · " + b.language : ""}
         </div>
       </div>
-      <button className="btn primary" onClick={onAdd}>
-        Add
-      </button>
+      {added ? (
+        <button className="btn" disabled aria-label="Already added">
+          ✓ Added
+        </button>
+      ) : (
+        <button className="btn primary" onClick={onAdd}>
+          Add
+        </button>
+      )}
     </div>
   );
 }
 
 /* ---------------- CSV (bulk, direct to library) ---------------- */
-function CsvTab({ shelves, onDone }) {
+function CsvTab({ shelves, onDone, defaultLanguage }) {
   const [msg, setMsg] = useState("");
 
   async function onFile(e) {
@@ -386,6 +443,7 @@ function CsvTab({ shelves, onDone }) {
     let added = 0;
     for (const b of parsed.books) {
       try {
+        if (defaultLanguage) b.language = defaultLanguage;
         const { book, created } = await db.addBook(b);
         if (created) added++;
         if (b.shelfNames && b.shelfNames.length) {
@@ -418,8 +476,8 @@ function CsvTab({ shelves, onDone }) {
 }
 
 /* ---------------- Manual ---------------- */
-function ManualTab({ onAdd }) {
-  const [f, setF] = useState({ title: "", authors: "", isbn: "", published: "", language: "", status: "to_read" });
+function ManualTab({ onAdd, defaultLanguage }) {
+  const [f, setF] = useState({ title: "", authors: "", isbn: "", published: "", language: defaultLanguage || "", status: "to_read" });
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
 
   function add() {

@@ -77,6 +77,15 @@ export default function App() {
     }
   }
 
+  async function setDefaultLanguage(lang) {
+    setProfile((p) => (p ? { ...p, default_language: lang } : p));
+    try {
+      await db.updateProfile({ default_language: lang });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   useEffect(() => {
     if (session) {
       setReady(false);
@@ -539,6 +548,9 @@ export default function App() {
       {showAdd && (
         <AddModal
           shelves={shelves}
+          existing={books}
+          defaultLanguage={profile?.default_language || ""}
+          onSetDefaultLanguage={setDefaultLanguage}
           onClose={() => setShowAdd(false)}
           onCommitted={() => {
             setShowAdd(false);
