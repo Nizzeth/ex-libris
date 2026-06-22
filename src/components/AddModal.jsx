@@ -24,6 +24,7 @@ export default function AddModal({ shelves, existing, defaultLanguage, onSetDefa
   const [tab, setTab] = useState("isbn");
   const [tray, setTray] = useState([]);
   const [committing, setCommitting] = useState(false);
+  const [trayOpen, setTrayOpen] = useState(false); // mobile tray sheet
 
   const existingKeys = useMemo(() => new Set((existing || []).map(bookKey)), [existing]);
   const isAdded = (b) => existingKeys.has(bookKey(b)) || tray.some((x) => bookKey(x) === bookKey(b));
@@ -61,9 +62,18 @@ export default function AddModal({ shelves, existing, defaultLanguage, onSetDefa
 
   return (
     <div className="scrim">
-      <div className="modal add-wide" role="dialog" aria-modal="true" aria-label="Add books">
+      <div className={"modal add-wide" + (trayOpen ? " tray-open" : "")} role="dialog" aria-modal="true" aria-label="Add books">
         <div className="mh">
           <h3>Add books</h3>
+          <button
+            className="tray-toggle"
+            onClick={() => setTrayOpen((o) => !o)}
+            aria-label={`Review tray, ${tray.length} book${tray.length === 1 ? "" : "s"}`}
+            aria-expanded={trayOpen}
+          >
+            <span aria-hidden="true">📚</span>
+            <span className="tray-count">{tray.length}</span>
+          </button>
           <button className="x" onClick={onClose} aria-label="Close">
             ×
           </button>
@@ -92,21 +102,6 @@ export default function AddModal({ shelves, existing, defaultLanguage, onSetDefa
           </div>
 
           <div className="add-tray">
-            <div className="tray-deflang">
-              <label htmlFor="deflang">Language for new books</label>
-              <select
-                id="deflang"
-                value={defaultLanguage}
-                onChange={(e) => onSetDefaultLanguage?.(e.target.value)}
-              >
-                <option value="">Auto (from catalog)</option>
-                {LANGS.map((l) => (
-                  <option key={l.code} value={l.name}>
-                    {l.name}
-                  </option>
-                ))}
-              </select>
-            </div>
             <button className="btn primary tray-commit" disabled={!tray.length || committing} onClick={commit}>
               {committing ? (
                 <>
@@ -116,27 +111,39 @@ export default function AddModal({ shelves, existing, defaultLanguage, onSetDefa
                 <>Add {tray.length || ""} to library</>
               )}
             </button>
-            <div className="tray-head" style={{ fontSize: 14, margin: "10px 0 8px" }}>
-              🧺 <b>{tray.length}</b> book(s) ready to add
-            </div>
-            <div id="trayList">
-              {tray.length ? (
-                tray.map((b, i) => (
-                  <div className="trow" key={i}>
-                    <span className="tt">
-                      {b.title} <span className="note">{b.authors}</span>
-                    </span>
-                    <span className="rm" onClick={() => setTray((p) => p.filter((_, j) => j !== i))}>
-                      ✕
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <span className="note">
-                  Nothing yet — add from any tab above. Scan several, paste a list of ISBNs, or pick from
-                  search.
-                </span>
-              )}
+            <div className="tray-sheet">
+              <div className="tray-deflang">
+                <label htmlFor="deflang">Language for new books</label>
+                <select id="deflang" value={defaultLanguage} onChange={(e) => onSetDefaultLanguage?.(e.target.value)}>
+                  <option value="">Auto (from catalog)</option>
+                  {LANGS.map((l) => (
+                    <option key={l.code} value={l.name}>
+                      {l.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="tray-head" style={{ fontSize: 14, margin: "10px 0 8px" }}>
+                🧺 <b>{tray.length}</b> book(s) ready to add
+              </div>
+              <div id="trayList">
+                {tray.length ? (
+                  tray.map((b, i) => (
+                    <div className="trow" key={i}>
+                      <span className="tt">
+                        {b.title} <span className="note">{b.authors}</span>
+                      </span>
+                      <span className="rm" onClick={() => setTray((p) => p.filter((_, j) => j !== i))}>
+                        ✕
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <span className="note">
+                    Nothing yet — add from any tab above. Scan several, paste a list of ISBNs, or pick from search.
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
