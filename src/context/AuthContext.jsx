@@ -23,10 +23,20 @@ export function AuthProvider({ children }) {
 
 export const useAuth = () => useContext(AuthCtx);
 
-export async function signInWithEmail(email) {
+export async function signInWithEmail(email, captchaToken) {
   return supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin },
+    options: {
+      emailRedirectTo: window.location.origin,
+      ...(captchaToken ? { captchaToken } : {}),
+    },
+  });
+}
+
+export async function signInWithGoogle() {
+  return supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.origin },
   });
 }
 

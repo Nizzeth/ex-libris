@@ -294,6 +294,11 @@ main{padding:18px 22px}
 .authcard p{color:var(--muted);font-size:14px;margin-top:0}
 .authcard input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;margin:12px 0;background:#fff}
 .authcard .btn.primary{width:100%}
+.google-btn{width:100%;background:#fff;border:1px solid var(--line);color:#2b2622;font-weight:500}
+.google-btn:hover{filter:brightness(.97)}
+.or-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:13px}
+.or-divider::before,.or-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.turnstile{margin:10px 0;display:flex;justify-content:center}
 .banner{background:#fff5e8;border:1px solid var(--accent2);color:#6b4a2a;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
 
 /* share page */
