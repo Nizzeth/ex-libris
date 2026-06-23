@@ -50,6 +50,7 @@ export default function App() {
   function exitSelect() {
     setSelectMode(false);
     setSelected(new Set());
+    setTagDraft("");
   }
 
   const reloadAll = useCallback(async () => {
@@ -222,6 +223,7 @@ export default function App() {
   async function tagSelected(rawTag, add) {
     const tag = rawTag.trim();
     if (!tag || !selected.size) return;
+    setTagDraft(""); // clear the box so the next tag can be typed straight away
     const ids = [...selected];
     const updates = ids
       .map((id) => {
